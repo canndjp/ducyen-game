@@ -4,7 +4,7 @@
 --tm:#4db2ff;--tf:#ff7ab8;--ok:#38d98a;--no:#ff5d6c;--la:#ff8a5c;--lb:#b583ff;--ld:#38d98a;
 --se:'Shippori Mincho B1',serif;--sa:'Be Vietnam Pro','Noto Sans JP',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--sa);overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--sa);overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 button{font:inherit;color:inherit;cursor:pointer}
 small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.15em}
 #bgl{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
@@ -50,10 +50,10 @@ small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.
 .qt small{font-family:var(--sa);font-size:max(.5em,13px);margin-top:.4em;line-height:1.3}
 @keyframes up{from{opacity:0;transform:translateY(24px) scale(.97)}}
 .ops{display:grid;grid-template-columns:1fr 1fr;gap:1.4vh 1.4vw}.ops.n2{grid-template-columns:1fr 1fr}.ops.n3{grid-template-columns:1fr}
-.op{position:relative;display:flex;align-items:center;gap:1vw;padding:calc(1.5vh*var(--fs,1)) 1.3vw;border-radius:18px;border:2px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.11),rgba(255,255,255,.035));font-weight:700;font-size:calc(clamp(16px,2vw,32px)*var(--fs,1));overflow:hidden;transition:.4s;animation:up .6s both;animation-delay:var(--d)}
+.op{position:relative;display:flex;align-items:center;gap:1vw;padding:calc(1.5vh*var(--fs,1)) 1.3vw;border-radius:18px;border:2px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.11),rgba(255,255,255,.035));font-weight:700;font-size:calc(clamp(16px,2vw,32px)*var(--fs,1));overflow:hidden;transition:border-color .4s,background .4s,box-shadow .4s,opacity .4s,filter .4s,transform .4s;animation:up .6s both;animation-delay:var(--d)}
 .op b{flex:none;width:1.75em;height:1.75em;border-radius:50%;display:grid;place-items:center;color:#1d0a18;font-family:var(--se);font-size:.95em;position:relative;z-index:1}
 .op:nth-child(1) b{background:var(--la);box-shadow:0 0 18px var(--la)}.op:nth-child(2) b{background:var(--lb);box-shadow:0 0 18px var(--lb)}.op:nth-child(3) b{background:var(--gold);box-shadow:0 0 18px var(--gold)}.op:nth-child(4) b{background:var(--ld);box-shadow:0 0 18px var(--ld)}
-.op span{flex:1;position:relative;z-index:1;text-align:left}.op .pc{position:absolute;inset:0 auto 0 0;width:0;background:rgba(255,215,106,.25);transition:width 1s cubic-bezier(.2,.9,.3,1)}
+.op span{flex:1;min-width:0;position:relative;z-index:1;text-align:left;overflow-wrap:anywhere}.op span small{font-size:max(.62em,13px);line-height:1.25}.op .pc{position:absolute;inset:0 auto 0 0;width:0;background:rgba(255,215,106,.25);transition:width 1s cubic-bezier(.2,.9,.3,1)}
 .op em{position:relative;z-index:1;font:800 .85em var(--se);font-style:normal;color:var(--gold);opacity:0;transition:.5s}
 .op.hide{opacity:.1;filter:grayscale(1)}
 .op.ok{border-color:var(--ok);background:rgba(56,217,138,.3);box-shadow:0 0 50px rgba(56,217,138,.55);transform:scale(1.025);animation:okp 1s ease-out}
@@ -125,27 +125,31 @@ small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.
 .mode{position:fixed;left:50%;bottom:.6vh;transform:translateX(-50%);font-size:11px;color:var(--mu);z-index:9}
 
 /* ============ PLAYER ============ */
-.p{height:100dvh;display:flex;flex-direction:column;padding:max(12px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));gap:10px;max-width:520px;margin:0 auto;overflow-y:auto}
+.p{height:100dvh;display:flex;flex-direction:column;padding:0 14px max(14px,env(safe-area-inset-bottom));gap:10px;max-width:520px;margin:0 auto;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.p>.pt:first-child{margin-top:max(12px,env(safe-area-inset-top))}
+.stk{position:sticky;top:0;z-index:6;display:flex;flex-direction:column;gap:8px;flex:none;margin:0 -14px;padding:max(10px,env(safe-area-inset-top)) 14px 8px;background:rgba(10,6,18,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.stk .pt{margin-top:0!important}
 .pt{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
 .pt .who{display:flex;align-items:center;gap:6px;font-weight:800;padding:4px 12px 4px 6px;border-radius:99px;border:2px solid;background:rgba(10,6,18,.5)}.pt .who i{font-style:normal;font-size:20px}.pt .who.m{border-color:var(--tm);color:var(--tm)}.pt .who.f{border-color:var(--tf);color:var(--tf)}
 .sc2{display:flex;gap:10px;font-weight:800}.sc2 .m{color:var(--tm)}.sc2 .f{color:var(--tf)}
 .ptug{height:6px;border-radius:6px;background:var(--tf);overflow:hidden;flex:none}.ptug i{display:block;height:100%;width:50%;background:var(--tm);transition:width 1s}
-.pc2{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.pc2{flex:1 0 auto;display:flex;flex-direction:column;gap:12px;justify-content:center}
 .pc2 h1{font:800 30px/1.2 var(--se);text-align:center;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}.pc2 h2{font:800 21px/1.3 var(--se);text-align:center}.pc2 p{text-align:center;color:var(--mu);line-height:1.5}
 .inp{width:100%;padding:14px;border-radius:14px;border:2px solid var(--ln);background:var(--gl);color:#fff;font:700 18px var(--sa);text-align:center}.inp:focus{outline:none;border-color:var(--gold)}
 .avs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.avb{aspect-ratio:1;border-radius:14px;border:2px solid var(--ln);background:var(--gl);font-size:26px;padding:0}.avb.on{border-color:var(--gold);background:rgba(255,215,106,.22);transform:scale(1.1)}
 .tb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tbn{padding:16px 8px;border-radius:18px;border:3px solid var(--ln);background:var(--gl);font-weight:800;font-size:18px;line-height:1.3}.tbn small{font-size:12px}.tbn.m.on{border-color:var(--tm);background:rgba(77,178,255,.28);box-shadow:0 0 24px rgba(77,178,255,.4)}.tbn.f.on{border-color:var(--tf);background:rgba(255,122,184,.28);box-shadow:0 0 24px rgba(255,122,184,.4)}
 .go2{padding:17px;border-radius:16px;border:0;background:linear-gradient(90deg,var(--red),#ff4d6d);font-weight:800;font-size:19px;box-shadow:0 0 24px rgba(239,1,7,.5)}.go2[disabled]{opacity:.35}
-.pq{font:800 19px/1.35 var(--se);text-align:center;max-height:34vh;overflow:auto}.pq small{font-family:var(--sa)}
-.pm{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--gold)}
+.pq{font:800 clamp(17px,5.2vw,22px)/1.35 var(--se);text-align:center;flex:none;overflow-wrap:anywhere}.pq small{font-family:var(--sa);font-size:max(.68em,13px);font-weight:600;margin-top:3px;line-height:1.35}
+.pm{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--gold);gap:8px}
+@media (max-height:680px){.p{gap:8px}.po{gap:7px}.pb{padding:6px 12px;border-width:2px;min-height:52px}.pc2{gap:8px}.avbig{font-size:64px}}
 .pring{position:relative;width:54px;height:54px;flex:none}.pring svg{width:100%;height:100%;transform:rotate(-90deg)}.pring circle{fill:none;stroke-width:7;stroke-linecap:round}.pring .t{stroke:rgba(255,255,255,.12)}.pring .p{stroke:var(--gold);stroke-dasharray:289;transition:stroke-dashoffset .25s linear}.pring.lo .p{stroke:var(--no)}
 .pring b{position:absolute;inset:0;display:grid;place-items:center;font:800 20px var(--se);color:#fff}
-.po{display:grid;gap:9px;flex:1;min-height:0;grid-auto-rows:minmax(54px,1fr)}
-.pb{display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:18px;border:3px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,.04));text-align:left;font-weight:700;font-size:17px;line-height:1.25;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s,opacity .3s}
-.pb b{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#1d0a18;font:800 19px var(--se)}
+.po{display:grid;gap:9px;flex:1 0 auto;grid-auto-rows:auto;align-content:stretch}
+.pb{display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:18px;border:3px solid var(--ln);background:linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,.04));text-align:left;font-weight:700;font-size:clamp(15px,4.4vw,18px);line-height:1.25;min-height:58px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s,opacity .3s}
+.pb b{flex:none;width:clamp(32px,9vw,40px);height:clamp(32px,9vw,40px);border-radius:50%;display:grid;place-items:center;color:#1d0a18;font:800 clamp(16px,4.6vw,19px) var(--se)}.pb span{flex:1;min-width:0;overflow-wrap:anywhere}
 .pb[data-o="0"] b{background:var(--la)}.pb[data-o="1"] b{background:var(--lb)}.pb[data-o="2"] b{background:var(--gold)}.pb[data-o="3"] b{background:var(--ld)}
-.pb small{font-size:12px}.pb:active{transform:scale(.96)}.pb.sel{border-color:var(--gold);background:rgba(255,215,106,.3);box-shadow:0 0 28px rgba(255,215,106,.45)}.pb.hide{opacity:.12;pointer-events:none}.pb.off{pointer-events:none}.pb:not(.sel).off{opacity:.45}
+.pb small{font-size:max(.8em,13px);font-weight:600;line-height:1.3;margin-top:2px}.pb:active{transform:scale(.96)}.pb.sel{border-color:var(--gold);background:rgba(255,215,106,.3);box-shadow:0 0 28px rgba(255,215,106,.45)}.pb.hide{opacity:.12;pointer-events:none}.pb.off{pointer-events:none}.pb:not(.sel).off{opacity:.45}
 .pb.ok{border-color:var(--ok);background:rgba(56,217,138,.32);opacity:1}.pb.no{border-color:var(--no);background:rgba(255,93,108,.26);opacity:1}
 .rb{border-radius:20px;padding:14px;text-align:center;border:2px solid var(--ln);background:var(--gl);animation:up .6s both}.rb.ok{border-color:var(--ok);background:rgba(56,217,138,.2)}.rb.no{border-color:var(--no);background:rgba(255,93,108,.18)}.rb.me{border-color:var(--gold);background:rgba(255,215,106,.22);box-shadow:0 0 36px rgba(255,215,106,.5)}
 .rb b{display:block;font:800 25px var(--se)}.rb span{color:var(--mu);font-size:14px}
@@ -172,6 +176,8 @@ body.hb #bgl{filter:brightness(1.7) saturate(1.5)}#bgl{transition:filter .2s}
 .rp{margin-top:12px;background:var(--gl);border:1px solid var(--ln);border-radius:14px;padding:12px 14px}.rp h3{font-size:15px;color:var(--gold);margin-bottom:6px}.rp h3 i{font-style:normal;margin-right:6px}.rp ul{list-style:none;padding:0}.rp li{font-size:13px;line-height:1.45;margin:5px 0;padding-left:1em;position:relative}.rp li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
 .lgb{display:flex;justify-content:center;gap:10px;margin-bottom:1.4vh}.lgbtn{padding:.55em 1.3em;border-radius:99px;border:2px solid var(--ln);background:var(--gl);font-weight:800;font-size:clamp(13px,1.25vw,20px)}.lgbtn.on{border-color:var(--gold);background:rgba(255,215,106,.25);color:var(--gold)}
 @keyframes fadeIn{from{opacity:0}}
+.qa.tight .lanes,.qa.tight .hint{display:none}
+@media (max-height:780px){.h{gap:.8vh}.qc{padding:1vh 2vw}.lane{min-height:3.4vh}.lane>div i{font-size:2.2vh}.ctl .btn{padding:.6vh 1vw}.meta{gap:1vw}}
 .pc2:has(.prules[open]){justify-content:flex-start;padding-top:80px;overflow-y:auto;height:100vh;height:100dvh}
 </style></head><body><div id="bgl"><i></i><i></i><i></i></div><canvas id="bg"></canvas><canvas id="fx"></canvas><div id="app"></div>
 <script>/* Mini QR encoder (byte mode, ECC M, v1-10) */
@@ -284,6 +290,14 @@ const QUESTIONS=[
  quiz('Hai bạn đi tuần trăng mật ở đâu?','ハネムーンの行き先は？',['Đà Lạt|ダラット','Phú Quốc|フーコック','Sapa|サパ','Hokkaido|北海道'],2,'Sapa — săn mây, ôm nhau cho đỡ lạnh 🌫️❄️'),
  vote('Ai nói nhiều hơn?','おしゃべりなのはどっち？',1),
  lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức làm việc tại nghiệp đoàn được 3 năm rưỡi|ドゥックは監理団体で3年半働いている','Đức thường hạn chế ăn đường|ドゥックは砂糖を控えている','Yến sang Nhật từ tháng 4/2024|イェンは2024年4月に来日した'],2,'Yến sang Nhật từ tháng 10/2025 nhé! ✈️'),
+ quiz('Tết Việt Nam, người lớn thường lì xì trong bao màu gì?','ベトナムのお正月、お年玉の袋は何色？',['Đỏ|赤','Trắng|白','Đen|黒','Xanh dương|青'],0,'Bao đỏ lì xì mang may mắn! Nhật có “otoshidama” (お年玉) giống hệt vậy 🧧'),
+ quiz('Đêm giao thừa ở Nhật, người ta thường ăn món gì?','日本の大晦日に食べるものは？',['Mì soba|年越しそば','Sushi|寿司','Lẩu|鍋','Bánh bao|肉まん'],0,'Toshikoshi soba 🍜 — ăn mì dài để sống lâu, cắt đứt vận xui năm cũ!'),
+ quiz('“Cạn ly!” trong tiếng Nhật nói thế nào?','「乾杯」は何と言う？',['Itadakimasu|いただきます','Arigatou|ありがとう','Kanpai|乾杯','Sumimasen|すみません'],2,'Kanpai! 🍻 Còn Việt Nam hô: “Một, hai, ba, dô!”'),
+ quiz('Người Nhật nói “Itadakimasu” vào lúc nào?','「いただきます」はいつ言う？',['Trước khi ăn|食べる前','Sau khi ăn|食べた後','Trước khi ngủ|寝る前','Khi chào tạm biệt|別れるとき'],0,'Trước bữa ăn, để cảm ơn món ăn và người nấu 🙏 Sau bữa ăn sẽ nói “Gochisousama”.'),
+ quiz('Mừng cưới ở Nhật, người ta bỏ tiền vào phong bì gọi là gì?','日本で結婚式のお祝い金を何と言う？',['Otoshidama|お年玉','Goshugi|ご祝儀','Omiyage|お土産','Okaeshi|お返し'],1,'Goshugi (ご祝儀)! Việt Nam cũng mừng cưới bằng phong bì — hai nước giống nhau ghê 💌'),
+ quiz('Cắm đũa thẳng đứng vào bát cơm bị kiêng ở cả hai nước vì giống gì?','お箸をご飯に立てるのがタブーなのはなぜ？',['Nén hương cúng người mất|仏前のお線香','Cây tre|竹','Báo hiệu ăn xong|食べ終わりの合図','Lời chúc may mắn|縁起がいい'],0,'Giống nén hương trên bàn thờ nên là điều đại kỵ ở cả Việt Nam lẫn Nhật Bản 🥢'),
+ quiz('Ô tô ở Nhật chạy bên nào của đường?','日本の車はどちら側を走る？',['Bên trái|左側','Bên phải|右側','Ở giữa|真ん中','Tùy nơi|場所による'],0,'Nhật đi bên trái, Việt Nam đi bên phải. Sang đường nhớ nhìn kỹ nhé! 🚗'),
+ quiz('Loài hoa nào thường được xem là biểu tượng của Việt Nam?','ベトナムの象徴とされる花は？',['Hoa sen|ハス（蓮）','Hoa anh đào|桜','Hoa cúc|菊','Hoa mai|梅'],0,'Hoa sen 🪷 — thanh cao, giản dị. Còn Nhật Bản gắn với hoa anh đào 🌸'),
  quiz('Theo Điều 1 của hợp đồng, ai luôn đúng?','契約第1条によると、いつも正しいのは誰？',['Chú rể|新郎','Cô dâu (Vợ)|新婦（妻）','Trọng tài VAR|VAR審判','Love Bot|ラブボット'],1,'Điều 1: Vợ luôn đúng! 👰✅'),
 ];
 
@@ -453,21 +467,24 @@ function host(){
   function render(){
     clearTimeout(auto);auto=0;const ph=S.phase;clearInterval(tipT);
     if(ph=='lobby')renderLobby();else if(ph=='final')renderFinal();else renderQ();
-    wire();live();chips();fitQ();
+    wire();live();chips();fitQ();fitSoon();
   }
-  function fitQ(){                          /* co cỡ chữ câu hỏi/đáp án cho vừa màn hình, theo font và kích thước thật */
+  function fitQ(){                          /* co cỡ chữ cho vừa màn hình; nếu vẫn tràn thì ẩn bớt phần phụ (tight) rồi co tiếp */
     const qa=document.querySelector('.qa'),h=document.querySelector('.h');if(!qa||!h)return;
     const bt=document.getElementById('bt'),keep=bt?bt.textContent:'';if(bt&&!keep&&S.bot)bt.textContent=S.bot;
     const ctl=document.querySelector('.ctl');
-    const bottom=()=>{let m=0;for(const c of qa.children){if(c.classList.contains('splash'))continue;m=Math.max(m,c.offsetTop+c.offsetHeight+0)}return m};
+    const bottom=()=>{let m=0;for(const c of qa.children){if(c.classList.contains('splash'))continue;m=Math.max(m,c.offsetTop+c.offsetHeight)}return m};
     const bad=()=>bottom()>qa.clientHeight+1||(ctl&&ctl.offsetTop+ctl.offsetHeight>h.clientHeight+1);
-    let s=1,r=1;const ap=()=>{qa.style.setProperty('--fs',s);qa.style.setProperty('--fr',r)},rd=x=>Math.round(x*100)/100;ap();
+    let s=1,r=1,tight=false;const ap=()=>{qa.style.setProperty('--fs',s);qa.style.setProperty('--fr',r)},rd=x=>Math.round(x*100)/100;
+    qa.classList.remove('tight');ap();
     if(qa.querySelector('.rv'))while(bad()&&r>.6){r=rd(r-.04);ap()}   /* lộ đáp án: thu nhỏ khối kết quả trước, giữ câu hỏi to */
-    while(bad()&&s>.45){s=rd(s-.04);r=Math.min(r,s);ap()}
+    while(bad()&&s>.55){s=rd(s-.03);r=Math.min(r,s);ap();if(s<=.8&&!tight){tight=true;qa.classList.add('tight')}}
     if(bt&&!keep)bt.textContent='';
   }
+  let _fq=0;const fitSoon=()=>{cancelAnimationFrame(_fq);_fq=requestAnimationFrame(()=>{fitQ();setTimeout(fitQ,250)})};
   addEventListener('resize',()=>fitQ());
   if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',()=>fitQ());
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitQ());
   function wire(){
     const g=id=>document.getElementById(id);
     g('mainb')&&(g('mainb').onclick=adv);g('l50')&&(g('l50').onclick=l50);g('lau')&&(g('lau').onclick=lau);g('lca')&&(g('lca').onclick=lca);g('brules')&&(g('brules').onclick=rulesToggle);g('betM')&&(g('betM').onclick=()=>bet('M'));g('betF')&&(g('betF').onclick=()=>bet('F'));
@@ -694,19 +711,20 @@ function player(){
       if(mine)confetti(160);return}
     if(!(S.text&&S.opts))return;
     const opts=arr(S.opts).map(o=>arr(o)),hid=arr(S.hide),txt=arr(S.text);
-    const head=left=>`<div class="pm"><span>Câu ${S.qi+1}/${S.n} · 💰 ${fmt(S.pts)}${S.bet?` · 🎲 ${TEAM[S.bet].n} cược!`:''}</span>${left==null?'':ring(left,S.dur)}</div><div class="pq">${esc(txt[0])}${txt[1]?`<small>${esc(txt[1])}</small>`:''}</div>`;
+    const pmh=left=>`<div class="pm"><span>Câu ${S.qi+1}/${S.n} · 💰 ${fmt(S.pts)}${S.bet?` · 🎲 ${TEAM[S.bet].n} cược!`:''}</span>${left==null?'':ring(left,S.dur)}</div>`;
+    const pqh=()=>`<div class="pq">${esc(txt[0])}${txt[1]?`<small>${esc(txt[1])}</small>`:''}</div>`;
     const btns=cls=>opts.map((o,i)=>`<button class="pb ${hid.includes(i)?'hide':''} ${cls(i)}" data-o="${i}"><b>${'ABCD'[i]}</b><span>${esc(o[0])}${o[1]?`<small style="display:block;color:var(--mu)">${esc(o[1])}</small>`:''}</span></button>`).join('');
     if(ph=='q'){
       const left0=Math.max(0,S.dur-(now()-S.startTs)/1000);
-      app.innerHTML=`<div class="p">${bar()}${head(left0)}<div class="po">${btns(i=>my==null?'':(my===i?'sel off':'off'))}</div><p style="text-align:center;font-size:14px;color:var(--mu);min-height:1.4em" id="pst">${my==null?'Chạm vào đáp án thật nhanh! ⚡':'✅ Đã chốt! Chờ kết quả…'}</p></div>`;
+      app.innerHTML=`<div class="p"><div class="stk">${bar()}${pmh(left0)}</div>${pqh()}<div class="po">${btns(i=>my==null?'':(my===i?'sel off':'off'))}</div><p style="text-align:center;font-size:14px;color:var(--mu);min-height:1.4em" id="pst">${my==null?'Chạm vào đáp án thật nhanh! ⚡':'✅ Đã chốt! Chờ kết quả…'}</p></div>`;
       document.querySelectorAll('.pb').forEach(b=>b.onclick=()=>{if(my!=null||S.phase!='q')return;const o=+b.dataset.o;my=o;myTs=Date.now();navigator.vibrate&&navigator.vibrate(30);
         DB.set('answers/'+S.qi+'/'+me.pid,{o,ts:TS});document.querySelectorAll('.pb').forEach(x=>x.classList.add('off'));b.classList.add('sel');$('#pst').textContent='✅ Đã chốt! Chờ kết quả…'});
       const t=()=>{const l=Math.max(0,S.dur-(now()-S.startTs)/1000);const pr=$('.pring');if(!pr)return;pr.classList.toggle('lo',l<=5);pr.querySelector('.p').style.strokeDashoffset=289*(1-l/S.dur);pr.querySelector('b').textContent=Math.ceil(l);const cc=Math.ceil(l);if(cc<=3&&cc>0&&window._lc!==cc){window._lc=cc;navigator.vibrate&&navigator.vibrate([60,60,60])}};t();cdI=setInterval(t,250);return}
-    if(ph=='locked'){app.innerHTML=`<div class="p">${bar()}${head(null)}<div class="po">${btns(i=>my===i?'sel off':'off')}</div><p style="text-align:center;color:var(--gold);font-weight:800">${my==null?'⏰ Hết giờ rồi!':'🔒 Đã khóa · Love Bot sắp lộ đáp án…'}</p></div>`;return}
+    if(ph=='locked'){app.innerHTML=`<div class="p"><div class="stk">${bar()}${pmh(null)}</div>${pqh()}<div class="po">${btns(i=>my===i?'sel off':'off')}</div><p style="text-align:center;color:var(--gold);font-weight:800">${my==null?'⏰ Hết giờ rồi!':'🔒 Đã khóa · Love Bot sắp lộ đáp án…'}</p></div>`;return}
     if(ph=='reveal'){
       const c=S.correct,right=my!=null&&my===c,w=S.winner,iAmW=w&&w.pid==me.pid,ms=(myTs&&S.startTs)?Math.max(0,myTs-S.startTs)/1000:null;
       const tw=w?TEAM[w.team]:null;
-      app.innerHTML=`<div class="p">${bar()}${head(null)}<div class="po" style="grid-auto-rows:minmax(44px,auto)">${btns(i=>i===c?'ok off':(my===i?'no off':'off'))}</div>
+      app.innerHTML=`<div class="p"><div class="stk">${bar()}${pmh(null)}</div>${pqh()}<div class="po" style="grid-auto-rows:auto;flex:none">${btns(i=>i===c?'ok off':(my===i?'no off':'off'))}</div>
         <div class="rb ${iAmW?'me':right?'ok':'no'}">${iAmW?`<b>🏆 BẠN NHANH NHẤT! +${fmt(S.gain??S.pts)}</b><span>${ms!=null?ms.toFixed(2)+' giây · ':''}điểm về ${TEAM[me.team].n}</span>`:right?`<b>🎉 Đúng rồi!</b><span>${ms!=null?ms.toFixed(2)+' giây':''}${w?` · nhanh nhất là ${esc(w.name)}`:''}</span>`:`<b>${my==null?'⏰ Không kịp trả lời':'😅 Sai rồi!'}</b><span>${w?`Nhanh nhất: ${esc(w.name)} ${tw.ic} (${(w.ms/1000).toFixed(2)}s)`:'Không ai đúng câu này'}</span>`}</div>
         ${mst?`<div class="pst"><div class="glass"><b>${mst.st>=2?'🔥':''}${mst.st}</b>Chuỗi đúng</div><div class="glass"><b>${mst.c}</b>Câu đúng</div><div class="glass"><b>#${mst.tr||'-'}</b>Hạng đội</div></div>`:''}
         ${S.bot?`<div class="pbot glass"><i>🤖</i><div><small>LOVE BOT</small>${esc(S.bot)}</div></div>`:''}</div>`;
