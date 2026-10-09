@@ -229,12 +229,12 @@ const ROOM = 'ducyen';
    - Thứ tự trong danh sách = thứ tự chơi. Điểm tăng dần theo bậc thang triệu phú.
    ===================================================================== */
 const o2=s=>s.split('|').map(x=>x.trim());
-const quiz=(q,jp,opts,a,n,tip)=>({k:'QUIZ · クイズ',q:[q,jp],o:opts.map(o2),a,n,tip,dur:20});
+const quiz=(q,jp,opts,a,n,tip)=>({k:'QUIZ · クイズ',q:[q,jp],o:opts.map(o2),a,n,tip,dur:10});
 const WHO=[['👨 Đức','ドゥック'],['👩 Yến','イェン']];
-const who=(q,a)=>({k:'AI NÓI CÂU NÀY? · 誰のセリフ？',q:[q[0],q[1]],o:WHO,a,n:'Là '+(a?'👩 Yến':'👨 Đức')+'!',dur:15});
+const who=(q,a)=>({k:'AI NÓI CÂU NÀY? · 誰のセリフ？',q:[q[0],q[1]],o:WHO,a,n:'Là '+(a?'👩 Yến':'👨 Đức')+'!',dur:10});
 const BOTH=[['🤝 Cả hai','二人とも']];
-const vote=(q,jp,a,both)=>({k:'AI HƠN AI? · どっち？',q:[q,jp],o:both?WHO.concat(BOTH):WHO,a,n:a==2?'Cả hai cùng “say nắng” một lúc! 💘':'Là '+(a?'👩 Yến':'👨 Đức')+'!',dur:15});
-const lie=(q,jp,opts,a,n)=>({k:'2 SỰ THẬT 1 LỜI NÓI DỐI · 二つの真実と一つの嘘',q:[q,jp],o:opts.map(o2),a,n,dur:25});
+const vote=(q,jp,a,both)=>({k:'AI HƠN AI? · どっち？',q:[q,jp],o:both?WHO.concat(BOTH):WHO,a,n:a==2?'Cả hai cùng “say nắng” một lúc! 💘':'Là '+(a?'👩 Yến':'👨 Đức')+'!',dur:10});
+const lie=(q,jp,opts,a,n)=>({k:'2 SỰ THẬT 1 LỜI NÓI DỐI · 二つの真実と一つの嘘',q:[q,jp],o:opts.map(o2),a,n,dur:12});
 
 const QUESTIONS=[
  quiz('Đức cổ vũ cho CLB nào?','新郎が応援するクラブは？',['Chelsea|チェルシー','Man United|マンU','Arsenal|アーセナル','Liverpool|リバプール'],2,'COYG! 🔴 Come On You Gunners!<br>COYG！ガナーズ頑張れ！'),
@@ -275,7 +275,7 @@ const EXTRA=`
 EXTRA.split('\n').map(s=>s.trim()).filter(Boolean).forEach(l=>{
   const p=l.replace(/^\*/,'').split('|').map(x=>x.trim()); if(p.length<4)return;
   const ans='ABCD'.indexOf((p[p.length-1]||'').toUpperCase()[0]); const opts=p.slice(1,p.length-1);
-  QUESTIONS.splice(QUESTIONS.length-1,0,{k:'QUIZ · クイズ',q:[p[0],''],o:opts.map(x=>[x,'']),a:ans<0?0:ans,n:'',dur:20});
+  QUESTIONS.splice(QUESTIONS.length-1,0,{k:'QUIZ · クイズ',q:[p[0],''],o:opts.map(x=>[x,'']),a:ans<0?0:ans,n:'',dur:10});
 });
 const Q=QUESTIONS;
 
@@ -478,7 +478,7 @@ function host(){
   /* --- luồng chơi --- */
   function startQ(i){
     const q=Q[i];
-    DB.set('state',{phase:'q',qi:i,n:Q.length,pts:ptsOf(i),dur:q.dur||20,startTs:TS,kind:q.k,text:q.q,opts:q.o,hide:null,pick:null,
+    DB.set('state',{phase:'q',qi:i,n:Q.length,pts:ptsOf(i),dur:q.dur||10,startTs:TS,kind:q.k,text:q.q,opts:q.o,hide:null,pick:null,
       correct:null,winner:null,dist:null,top:null,total:null,okN:null,manualAw:null,an:null,bot:null,scores:scores(),ver:Date.now()});
     whoosh();
   }
@@ -575,6 +575,7 @@ function player(){
   const tugR=()=>{const t=sc.M+sc.F;return t?sc.M/t*100:50};
   const bar=()=>`<div class="pt"><span class="who ${TEAM[me.team].c}"><i>${me.av||'🙂'}</i>${esc(me.name)}</span><span class="sc2"><span class="m">💙 ${fmt(sc.M)}</span><span class="f">💖 ${fmt(sc.F)}</span></span></div><div class="ptug"><i style="width:${tugR()}%"></i></div>`;
   function join(){
+    if(me&&me.team&&!teamSel)teamSel=me.team;
     app.innerHTML=`<div class="p"><div class="pc2" style="gap:10px"><div style="text-align:center;font-size:40px">💍</div><h1>AI LÀ TRIỆU PHÚ<small style="font-family:var(--sa);font-size:13px;color:var(--mu);-webkit-text-fill-color:var(--mu)">Đức ♥ Yến · 大富豪</small></h1>
       <input class="inp" id="nm" maxlength="14" placeholder="Tên của bạn · お名前" autocomplete="off" value="${esc(me&&me.name||'')}">
       <div class="avs">${AVS.map(a=>`<button class="avb ${avSel==a?'on':''}" data-a="${a}">${a}</button>`).join('')}</div>
@@ -591,7 +592,7 @@ function player(){
   function ring(left,dur){const lo=left<=5;return`<div class="pring ${lo?'lo':''}"><svg viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="46"/><circle class="p" cx="50" cy="50" r="46" style="stroke-dashoffset:${289*(1-left/dur)}"/></svg><b>${Math.ceil(left)}</b></div>`}
   function render(){
     clearInterval(cdI);
-    if(!me){join();return}
+    if(!me||!me.av){join();return}
     const ph=S.phase;
     if(ph=='lobby'||S.qi==null||S.qi<0){app.innerHTML=`<div class="p">${bar()}<div class="pc2"><div class="avbig">${me.av}</div><h2>Đã vào phòng!<small style="font-family:var(--sa);font-size:13px;color:var(--mu)">参加完了！</small></h2><p>Chào <b class="gold">${esc(me.name)}</b> · ${TEAM[me.team].ic} ${TEAM[me.team].n}<br>Chờ MC bắt đầu nhé. Hãy nhìn lên màn hình lớn 👀</p></div></div>`;return}
     if(ph=='final'){const s=sc,w=s.M==s.F?null:s.M>s.F?'M':'F',mine=w&&w==me.team;
