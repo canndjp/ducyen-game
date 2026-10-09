@@ -295,10 +295,28 @@ EXTRA.split('\n').map(s=>s.trim()).filter(Boolean).forEach(l=>{
   const ans='ABCD'.indexOf((p[p.length-1]||'').toUpperCase()[0]); const opts=p.slice(1,p.length-1);
   QUESTIONS.splice(QUESTIONS.length-1,0,{k:'QUIZ · クイズ',q:[p[0],''],o:opts.map(x=>[x,'']),a:ans<0?0:ans,n:'',dur:10});
 });
-const Q=QUESTIONS;
+/* ---------- Mỗi lượt chơi: chọn ngẫu nhiên + xáo thứ tự câu hỏi ---------- */
+const POOL=QUESTIONS;                       /* kho câu hỏi; câu cuối = câu chốt "triệu phú", luôn đứng cuối */
+const ROUND_N=Math.max(4,Math.min(+new URLSearchParams(location.search).get('n')||10,POOL.length)); /* số câu mỗi lượt (đổi bằng ?n=12) */
+const SEEN_KEY='dy_seen_'+ROOM;             /* host nhớ câu nào đã chơi để các lượt sau không trùng */
+const seenGet=()=>{try{return JSON.parse(localStorage[SEEN_KEY]||'[]')}catch(e){return[]}};
+const seenAdd=i=>{try{const s=seenGet();if(!s.includes(i)){s.push(i);localStorage[SEEN_KEY]=JSON.stringify(s)}}catch(e){}};
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function pickRound(){
+  const fin=POOL.length-1,need=ROUND_N-1,all=[...Array(fin).keys()];
+  const seen=seenGet().filter(i=>i<fin);
+  let pick=shuf(all.filter(i=>!seen.includes(i))).slice(0,need);
+  if(pick.length<need){                     /* hết câu mới -> bắt đầu vòng mới, bù thêm từ các câu cũ */
+    try{localStorage[SEEN_KEY]='[]'}catch(e){}
+    pick=pick.concat(shuf(all.filter(i=>!pick.includes(i))).slice(0,need-pick.length));
+  }
+  return shuf(pick).concat([fin]);
+}
+let Q=POOL.slice(0,ROUND_N-1).concat(POOL.slice(-1));   /* tạm thời, host sẽ thay bằng thứ tự ngẫu nhiên của lượt chơi */
 
 /* ---------- Điểm: bậc thang triệu phú ---------- */
-const LAD=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+const LAD15=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+const LAD=Array.from({length:ROUND_N},(_,k)=>LAD15[Math.round(k*(LAD15.length-1)/Math.max(1,ROUND_N-1))]); /* bậc thang co theo số câu, câu cuối luôn 1.000.000 */
 const stepOf=i=>Math.min(LAD.length-1,Math.floor(i*LAD.length/Q.length));
 const ptsOf=i=>LAD[stepOf(i)];
 const fmt=n=>(n||0).toLocaleString('vi-VN');
@@ -379,7 +397,7 @@ function botComment(c){
    ===================================================================== */
 /* ---------- Luật chơi ---------- */
 const RULES=[
- ['🎮','Cách chơi · 遊び方',['Có <b>2 đội: Nam 💙 và Nữ 💖</b>. Quét QR, chọn avatar và đội của mình.','Mỗi câu hỏi có <b>10 giây</b> (câu "2 sự thật 1 lời nói dối" có 12 giây). Cả phòng trả lời cùng lúc trên điện thoại.','Chỉ được chọn <b>1 lần</b>, bấm rồi không đổi được. Trả lời sai <b>không bị trừ điểm</b>.','<b>Người đúng VÀ nhanh nhất</b> (tính cả hai đội) ăn điểm cho đội của mình. Các bạn đúng còn lại giúp đội qua thống kê, nhưng không có điểm.','Câu càng về sau điểm càng lớn: từ <b>100</b> lên tới <b>1.000.000 xu tình yêu</b>. Hết 29 câu, đội nhiều xu hơn là <b>Triệu phú</b>!']],
+ ['🎮','Cách chơi · 遊び方',['Có <b>2 đội: Nam 💙 và Nữ 💖</b>. Quét QR, chọn avatar và đội của mình.','Mỗi câu hỏi có <b>10 giây</b> (câu "2 sự thật 1 lời nói dối" có 12 giây). Cả phòng trả lời cùng lúc trên điện thoại.','Chỉ được chọn <b>1 lần</b>, bấm rồi không đổi được. Trả lời sai <b>không bị trừ điểm</b>.','<b>Người đúng VÀ nhanh nhất</b> (tính cả hai đội) ăn điểm cho đội của mình. Các bạn đúng còn lại giúp đội qua thống kê, nhưng không có điểm.','Câu càng về sau điểm càng lớn: từ <b>100</b> lên tới <b>1.000.000 xu tình yêu</b>. Hết '+ROUND_N+' câu, đội nhiều xu hơn là <b>Triệu phú</b>!']],
  ['🔥','Điểm thưởng · ボーナス',['<b>Combo:</b> người nhanh nhất đã đúng liên tiếp <b>3–4 câu → ×1.5</b>, từ <b>5 câu → ×2</b>.','<b>🆘 Cứu trợ:</b> đội đang bị bỏ xa từ 3 câu trở lên mà thắng câu này được cộng thêm <b>+0.5</b> vào hệ số.','<b>🎲 Đặt cược:</b> mỗi đội có <b>1 lần</b>. Đội hô to "CƯỢC!" khi câu hỏi đang chạy, MC bấm xác nhận. Đội thắng câu đó được <b>×2</b>; nếu đội kia thắng hoặc không ai đúng thì <b>mất 50%</b> điểm câu đó (không bị âm).','Các hệ số cộng/nhân với nhau, nên một câu có thể ra điểm rất lớn!']],
  ['🛟','Quyền trợ giúp · ヘルプ',['Cả phòng có <b>3 quyền, mỗi quyền dùng 1 lần</b>. Đội nào cần thì hô, MC bấm.','<b>50:50:</b> bỏ đi 2 đáp án sai, còn lại 2 lựa chọn.','<b>👥 Hỏi khán giả:</b> hiện % người chơi đang chọn từng đáp án. Tham khảo thôi, đám đông cũng có lúc sai!','<b>📞 Gọi người thân:</b> 30 giây mời <b>Đức, Yến hoặc một vị khách</b> lên tư vấn.','Mẹo: đừng bấm vội, nhưng cũng đừng chậm, vì người nhanh nhất mới có điểm.']]
 ];
@@ -387,6 +405,10 @@ const rulesHTML=(c)=>RULES.map(r=>`<section class="${c}"><h3><i>${r[0]}</i>${r[1
 function host(){
   let players={},answers={},results={},S={phase:'lobby',qi:-1},used={f:0,a:0,c:0},audOn=0,timer=0,botsOn=0,bots=[],lastKey='',auto=0,tipI=0,tipT=0;
   const app=$('#app'),shownN={M:0,F:0};
+  let ORD=[];
+  DB.on('order',v=>{const o=arr(v).map(Number).filter(i=>POOL[i]);
+    if(o.length){const same=o.length==ORD.length&&o.every((x,i)=>x===ORD[i]);ORD=o;Q=o.map(i=>POOL[i]);if(!same){lastKey='';render()}}
+    else DB.set('order',pickRound())});     /* lần đầu hoặc sau Reset: tạo thứ tự mới */
   const rsList=()=>Object.keys(results||{}).map(Number).sort((a,b)=>a-b).map(k=>results[k]).filter(r=>r&&typeof r=='object');
   const scores=()=>{const s={M:0,F:0};rsList().forEach(r=>{if(r.team)s[r.team]+=r.pts||0;if(r.pen&&r.pen.team)s[r.pen.team]=Math.max(0,s[r.pen.team]-(r.pen.pts||0))});return s};
   const plist=()=>Object.entries(players||{}).filter(([k,v])=>v&&v.team).map(([k,v])=>({pid:k,...v}));
@@ -504,7 +526,7 @@ function host(){
 
   /* --- luồng chơi --- */
   function startQ(i){
-    const q=Q[i];
+    const q=Q[i];const oi=ORD[i];if(oi!=null&&oi<POOL.length-1)seenAdd(oi);
     DB.set('state',{phase:'q',qi:i,n:Q.length,pts:ptsOf(i),dur:+P.get('dur')||q.dur||10,startTs:TS,kind:q.k,text:q.q,opts:q.o,hide:null,pick:null,bet:null,gain:null,mul:null,tags:null,pen:null,
       correct:null,winner:null,dist:null,top:null,total:null,okN:null,manualAw:null,an:null,bot:null,scores:scores(),ver:Date.now()});
     whoosh();
