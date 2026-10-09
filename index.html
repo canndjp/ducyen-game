@@ -154,6 +154,11 @@ small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.
 .spin{animation:pl .7s infinite alternate;font-size:54px;text-align:center}
 .avbig{font-size:84px;text-align:center;animation:bob 1.4s ease-in-out infinite alternate;filter:drop-shadow(0 0 22px rgba(255,215,106,.5))}
 @keyframes up2{from{opacity:0;transform:translateY(18px)}}
+
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.tags span{background:rgba(255,215,106,.14);border:1px solid rgba(255,215,106,.5);color:var(--gold);padding:3px 10px;border-radius:99px;font-size:clamp(11px,1.1vw,16px);font-weight:700}
+.betb{background:linear-gradient(90deg,#ef0107,#b583ff);padding:4px 12px;border-radius:99px;font-weight:800;animation:pulse 1s infinite alternate}
+@keyframes pulse{to{transform:scale(1.05)}}
+body.hb #bgl{filter:brightness(1.7) saturate(1.5)}#bgl{transition:filter .2s}
 </style></head><body><div id="bgl"><i></i><i></i><i></i></div><canvas id="bg"></canvas><canvas id="fx"></canvas><div id="app"></div>
 <script>/* Mini QR encoder (byte mode, ECC M, v1-10) */
 function makeQR(text){
@@ -303,7 +308,7 @@ function initDB(cb){
       d.ref('.info/serverTimeOffset').on('value',s=>offset=s.val()||0);
       const W=pr=>pr.catch(e=>{const m='⚠ Lỗi ghi Firebase: '+(e&&e.message||e);console.error(m);let t=document.getElementById('dberr');if(!t){t=document.createElement('div');t.id='dberr';t.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#b00020;color:#fff;font:600 13px sans-serif;padding:10px 14px;border-radius:10px';document.body.append(t)}t.textContent=m;throw e});
       DB={mode:'firebase',set:(p,v)=>W(root.child(p).set(v)),update:(p,v)=>W(root.child(p).update(v)),
-        reset:()=>W(root.set(null)),
+        reset:()=>W(root.set({rid:Date.now()})),
         on:(p,f)=>{const r=root.child(p),h=s=>f(s.val());r.on('value',h);return()=>r.off('value',h)}};
       cb()}).catch(()=>{document.body.innerHTML='<p style="padding:30px;font:18px sans-serif">Không kết nối được Firebase. Kiểm tra mạng và cấu hình.</p>'});
   }else{
@@ -316,7 +321,7 @@ function initDB(cb){
     addEventListener('storage',e=>{if(e.key==KEY){try{data=JSON.parse(e.newValue||'{}')}catch(x){data={}}fire()}});
     DB={mode:'demo',set:(p,v)=>{setAt(p,res(JSON.parse(JSON.stringify(v??null))));save();return Promise.resolve()},
       update:(p,v)=>{v=res(JSON.parse(JSON.stringify(v)));for(const k in v)setAt(p+'/'+k,v[k]);save();return Promise.resolve()},
-      reset:()=>{data={};save();return Promise.resolve()},
+      reset:()=>{data={rid:Date.now()};save();return Promise.resolve()},
       on:(p,f)=>{const l={p,f,j:undefined};L.push(l);setTimeout(()=>{const j=JSON.stringify(at(p)??null);l.j=j;f(JSON.parse(j))});return()=>{L=L.filter(x=>x!==l)}}};
     cb();
   }
@@ -363,12 +368,13 @@ function host(){
   let players={},answers={},results={},S={phase:'lobby',qi:-1},used={f:0,a:0,c:0},audOn=0,timer=0,botsOn=0,bots=[],lastKey='',auto=0,tipI=0,tipT=0;
   const app=$('#app'),shownN={M:0,F:0};
   const rsList=()=>Object.keys(results||{}).map(Number).sort((a,b)=>a-b).map(k=>results[k]).filter(r=>r&&typeof r=='object');
-  const scores=()=>{const s={M:0,F:0};rsList().forEach(r=>{if(r.team)s[r.team]+=r.pts||0});return s};
+  const scores=()=>{const s={M:0,F:0};rsList().forEach(r=>{if(r.team)s[r.team]+=r.pts||0;if(r.pen&&r.pen.team)s[r.pen.team]=Math.max(0,s[r.pen.team]-(r.pen.pts||0))});return s};
   const plist=()=>Object.entries(players||{}).filter(([k,v])=>v&&v.team).map(([k,v])=>({pid:k,...v}));
   const valid=()=>{const q=Q[S.qi];if(!q)return[];return Object.entries(answers[S.qi]||{}).filter(([pid,x])=>players[pid]&&x&&x.ts<=S.startTs+S.dur*1000+1500&&!(arr(S.hide).includes(x.o))).map(([pid,x])=>({pid,o:x.o,ms:Math.max(0,x.ts-S.startTs),p:players[pid]}))};
 
   DB.on('players',v=>{players=v||{};live()});
   DB.on('answers',v=>{answers=v||{};live()});
+  let betUsed={};DB.on('betUsed',v=>{betUsed=v||{};live()});
   DB.on('results',v=>{results=v||{};chips()});
   DB.on('state',v=>{const prev=S;S=v||{phase:'lobby',qi:-1};const k=S.phase+'|'+S.qi+'|'+(arr(S.hide).join())+'|'+(S.ver||'');
     if(k!==lastKey){lastKey=k;if(S.phase=='q'&&prev.qi!==S.qi){audOn=0;shownN.M=shownN.F=0;botGo()}if(S.phase=='q'&&prev.phase!='q'&&!timer)tick0();render()}else live()});
@@ -383,7 +389,7 @@ function host(){
     const ph=S.phase,q=Q[S.qi];
     const main={lobby:'▶ Bắt đầu (Space)',q:'⏭ Chốt đáp án (Space)',locked:'🎯 Lộ đáp án (Space)',reveal:S.qi>=Q.length-1?'🏁 Tổng kết (Space)':'▶ Câu tiếp (Space)',final:''}[ph];
     return`<div class="ctl">${main?`<button class="btn go" id="mainb">${main}</button>`:''}
-      ${ph=='q'?`<button class="btn" id="l50" ${used.f||!q||q.o.length<3?'disabled':''}>50:50 (F)</button><button class="btn" id="lau" ${used.a?'disabled':''}>👥 Hỏi khán giả (A)</button><button class="btn" id="lca" ${used.c?'disabled':''}>📞 Gọi người thân (C)</button>`:''}
+      ${ph=='q'?`<button class="btn" id="l50" ${used.f||!q||q.o.length<3?'disabled':''}>50:50 (F)</button><button class="btn" id="lau" ${used.a?'disabled':''}>👥 Hỏi khán giả (A)</button><button class="btn" id="lca" ${used.c?'disabled':''}>📞 Gọi người thân (C)</button><button class="btn m" id="betM" ${betUsed.M?'disabled':''}>🎲 Nam cược (Q)${S.bet=='M'?' ✔':''}</button><button class="btn f" id="betF" ${betUsed.F?'disabled':''}>🎲 Nữ cược (W)${S.bet=='F'?' ✔':''}</button>`:''}
       <span class="sp"></span>
       ${ph=='reveal'?`<span class="hint">Chấm tay:</span><button class="btn m" data-aw="M">+ Nam</button><button class="btn f" data-aw="F">+ Nữ</button>`:''}
       <button class="btn" id="bbots">🤖 Bot thử (B)</button><button class="btn" id="bfin">🏁 Kết thúc (End)</button><button class="btn" id="brst">♻ Reset (R)</button></div>`}
@@ -395,7 +401,7 @@ function host(){
   }
   function wire(){
     const g=id=>document.getElementById(id);
-    g('mainb')&&(g('mainb').onclick=adv);g('l50')&&(g('l50').onclick=l50);g('lau')&&(g('lau').onclick=lau);g('lca')&&(g('lca').onclick=lca);
+    g('mainb')&&(g('mainb').onclick=adv);g('l50')&&(g('l50').onclick=l50);g('lau')&&(g('lau').onclick=lau);g('lca')&&(g('lca').onclick=lca);g('betM')&&(g('betM').onclick=()=>bet('M'));g('betF')&&(g('betF').onclick=()=>bet('F'));
     g('bbots')&&(g('bbots').onclick=addBots);g('bfin')&&(g('bfin').onclick=toFinal);g('brst')&&(g('brst').onclick=reset);
     document.querySelectorAll('[data-aw]').forEach(b=>b.onclick=()=>award(b.dataset.aw));
   }
@@ -434,7 +440,7 @@ function host(){
     const q=Q[S.qi],ph=S.phase,rv=ph=='reveal',hid=arr(S.hide),n=q.o.length,cls=n==2?'n2':n==3?'n3':'',dist=arr(S.dist);
     app.innerHTML=`<div class="h">${head()}<div class="mn"><div class="qa ${rv?'show rvm':''}">
       ${ph=='q'?`<div class="splash"><div>CÂU ${S.qi+1}<br><small>💰 ${fmt(S.pts)} XU</small></div></div>`:''}
-      <div class="meta"><span class="kind">${q.k}</span><span>Câu ${S.qi+1}/${Q.length}</span><span class="pts">💰 ${fmt(S.pts)} xu tình yêu</span>
+      <div class="meta"><span class="kind">${q.k}</span><span>Câu ${S.qi+1}/${Q.length}</span><span class="pts">💰 ${fmt(S.pts)} xu tình yêu</span>${S.bet?`<span class="betb">🎲 ${TEAM[S.bet].n.toUpperCase()} ĐẶT CƯỢC · thắng ×2 · thua −50%</span>`:''}
         ${rv?'':`<div class="ring" id="ring"><svg viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="46"/><circle class="p" id="rp" cx="50" cy="50" r="46"/></svg><b id="cd">${S.dur}</b></div>`}</div>
       <div class="qc glass"><h2 class="qt">${bi(q.q)}</h2></div>
       <div class="ops ${cls}">${q.o.map((o,i)=>`<div class="op ${hid.includes(i)?'hide':''} ${rv?(i===S.correct?'ok':'dim'):''}" style="--w:${S.total?Math.round((dist[i]||0)/S.total*100):0}%;--d:${.5+i*.12}s"><div class="pc"></div><b>${'ABCD'[i]}</b><span>${bi(o)}</span><em>${rv?`${S.total?Math.round((dist[i]||0)/S.total*100):0}% · ${dist[i]||0}`:''}</em></div>`).join('')}</div>
@@ -451,8 +457,8 @@ function host(){
   function resultHTML(){
     const w=S.winner,s=scores(),top=arr(S.top),a=S.an||{},lvc={'Dễ':'','Vừa':'v2','Khó':'v3','Rất khó':'v4'}[a.lv]||'';
     const sp=v=>v==null?'—':(v/1000).toFixed(2)+'s',pc=v=>v==null?'—':Math.round(v*100)+'%';
-    return`<div class="rv"><div class="card glass win">${w?`<h3><i>${w.av||'⚡'}</i> Nhanh nhất: ${esc(w.name)}</h3><div class="t">${TEAM[w.team].ic} ${TEAM[w.team].n} · <b class="gold">${(w.ms/1000).toFixed(2)} giây</b> → <b class="gold">+${fmt(S.pts)} xu</b></div>
-      ${top.length>1?`<div class="t">Tiếp theo: ${top.slice(1).map(x=>`${esc(x.name)} ${(x.ms/1000).toFixed(2)}s`).join(' · ')}</div>`:''}`:`<h3><i>😅</i> ${S.manualAw?'Chấm tay':'Không ai trả lời đúng!'}</h3><div class="t">Chưa có đội nào được điểm câu này.</div>`}
+    return`<div class="rv"><div class="card glass win">${w?`<h3><i>${w.av||'⚡'}</i> Nhanh nhất: ${esc(w.name)}</h3><div class="t">${TEAM[w.team].ic} ${TEAM[w.team].n} · <b class="gold">${(w.ms/1000).toFixed(2)} giây</b> → <b class="gold">+${fmt(S.gain??S.pts)} xu</b></div>
+      ${arr(S.tags).length?`<div class="tags">${arr(S.tags).map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}${top.length>1?`<div class="t">Tiếp theo: ${top.slice(1).map(x=>`${esc(x.name)} ${(x.ms/1000).toFixed(2)}s`).join(' · ')}</div>`:''}`:`<h3><i>😅</i> ${S.manualAw?'Chấm tay':'Không ai trả lời đúng!'}</h3><div class="t">Chưa có đội nào được điểm câu này.</div>${arr(S.tags).length?`<div class="tags">${arr(S.tags).map(t=>`<span>${esc(t)}</span>`).join('')}</div>`:''}`}
       ${Q[S.qi].n?`<div class="n">${Q[S.qi].n}</div>`:''}</div>
       <div class="card glass an"><h4>🧠 PHÂN TÍCH CỦA LOVE BOT</h4>
         <div class="row"><span>Độ khó</span><span class="lv ${lvc}">${a.lv||'—'}</span><span style="min-width:0">${a.tot?`${a.ok}/${a.tot} đúng`:''}</span></div>
@@ -469,7 +475,7 @@ function host(){
   function tick(){
     if(S.phase!='q'){clearInterval(timer);timer=0;return}
     const left=Math.max(0,S.dur-(now()-S.startTs)/1000),e=$('#cd'),rp=$('#rp'),rg=$('#ring');
-    if(e){const c=Math.ceil(left);if(e.textContent!=c){e.textContent=c;if(c<=5&&c>0)tone(880,.1,0,.05)}}
+    if(e){const c=Math.ceil(left);if(e.textContent!=c){e.textContent=c;if(c<=5&&c>0)tone(880,.1,0,.05);if(c<=3&&c>0){tone(65,.16,0,.2);tone(65,.12,.2,.14);document.body.classList.add('hb');setTimeout(()=>document.body.classList.remove('hb'),350)}}}
     if(rg)rg.classList.toggle('lo',left<=5);
     if(rp)rp.style.strokeDashoffset=289*(1-left/S.dur);
     if(left<=0)lock();
@@ -478,7 +484,7 @@ function host(){
   /* --- luồng chơi --- */
   function startQ(i){
     const q=Q[i];
-    DB.set('state',{phase:'q',qi:i,n:Q.length,pts:ptsOf(i),dur:q.dur||10,startTs:TS,kind:q.k,text:q.q,opts:q.o,hide:null,pick:null,
+    DB.set('state',{phase:'q',qi:i,n:Q.length,pts:ptsOf(i),dur:+P.get('dur')||q.dur||10,startTs:TS,kind:q.k,text:q.q,opts:q.o,hide:null,pick:null,bet:null,gain:null,mul:null,tags:null,pen:null,
       correct:null,winner:null,dist:null,top:null,total:null,okN:null,manualAw:null,an:null,bot:null,scores:scores(),ver:Date.now()});
     whoosh();
   }
@@ -486,16 +492,25 @@ function host(){
   function reveal(c){
     const before=scores(),v=valid(),ok=v.filter(x=>x.o===c).sort((a,b)=>a.ms-b.ms),w=ok[0],dist=Q[S.qi].o.map((_,i)=>v.filter(x=>x.o===i).length);
     const okMap={};ok.forEach(x=>okMap[x.pid]=x.ms);
-    const res=w?{pid:w.pid,name:w.p.name,team:w.p.team,ms:w.ms,pts:S.pts,ok:okMap}:{pid:'-',name:'',team:'',ms:0,pts:0};
+    let mul=1,tags=[],pen=null,gain=0;
+    if(w){let stk=1;for(let j=S.qi-1;j>=0;j--){const r=results[j];if(r&&r.ok&&r.ok[w.pid]!==undefined)stk++;else break}
+      if(stk>=5){mul+=1;tags.push('🔥 Combo ×2 · '+stk+' câu đúng liên tiếp')}else if(stk>=3){mul+=.5;tags.push('🔥 Combo ×1.5 · '+stk+' câu đúng liên tiếp')}
+      const opp=w.p.team=='M'?'F':'M';if(before[opp]-before[w.p.team]>=S.pts*3){mul+=.5;tags.push('🆘 Cứu trợ +0.5 · đội đang bị bỏ xa')}
+      if(S.bet){if(S.bet===w.p.team){mul*=2;tags.push('🎲 Cược thắng ×2')}else{pen={team:S.bet,pts:Math.min(before[S.bet],Math.round(S.pts/2))};tags.push('🎲 '+TEAM[S.bet].n+' cược thua −'+fmt(pen.pts))}}
+      gain=Math.round(S.pts*mul)}
+    else if(S.bet){pen={team:S.bet,pts:Math.min(before[S.bet],Math.round(S.pts/2))};tags.push('🎲 '+TEAM[S.bet].n+' cược thua −'+fmt(pen.pts))}
+    if(S.bet)DB.set('betUsed/'+S.bet,1);
+    const res=w?{pid:w.pid,name:w.p.name,team:w.p.team,ms:w.ms,pts:gain,ok:okMap}:{pid:'-',name:'',team:'',ms:0,pts:0};
+    if(pen&&pen.pts>0)res.pen=pen;else pen=null;
     results=Array.isArray(results)?Object.assign({},results):(results||{});results[S.qi]=res;
     DB.set('results/'+S.qi,res);const sc=scores();
     const tm=t=>v.filter(x=>x.p.team==t),okt=t=>ok.filter(x=>x.p.team==t),acc=v.length?ok.length/v.length:0;
     const an={acc,ok:ok.length,tot:v.length,aM:tm('M').length?okt('M').length/tm('M').length:null,aF:tm('F').length?okt('F').length/tm('F').length:null,
       mM:mean(okt('M').map(x=>x.ms)),mF:mean(okt('F').map(x=>x.ms)),lv:!v.length?'—':acc>=.8?'Dễ':acc>=.5?'Vừa':acc>=.25?'Khó':'Rất khó'};
     const lb=before.M>before.F?'M':before.F>before.M?'F':null,la=sc.M>sc.F?'M':sc.F>sc.M?'F':null;
-    const bot=botComment({acc,w:w&&{name:w.p.name,team:w.p.team,ms:w.ms},pts:S.pts,lead:(la&&la!==lb&&before.M+before.F>0)?la:null,gap:Math.abs(sc.M-sc.F)});
+    const bot=botComment({acc,w:w&&{name:w.p.name,team:w.p.team,ms:w.ms},pts:gain||S.pts,lead:(la&&la!==lb&&before.M+before.F>0)?la:null,gap:Math.abs(sc.M-sc.F)});
     DB.update('state',{phase:'reveal',correct:c,winner:w?{pid:w.pid,name:w.p.name,team:w.p.team,ms:w.ms,av:avOf(w.p)}:null,
-      top:ok.slice(0,3).map(x=>({name:x.p.name,ms:x.ms})),dist,total:v.length,okN:ok.length,scores:sc,manualAw:null,an,bot});
+      gain:gain,mul:mul,tags:tags,pen:pen,top:ok.slice(0,3).map(x=>({name:x.p.name,ms:x.ms})),dist,total:v.length,okN:ok.length,scores:sc,manualAw:null,an,bot});
     writeStats();
     setTimeout(()=>{w?chime():buzz();if(w)confetti(90,innerWidth*.3,innerHeight*.6)},400);
   }
@@ -511,7 +526,7 @@ function host(){
   function writeStats(){const o={};calcStats().forEach(s=>o[s.pid]={c:s.c,w:s.w,st:s.st,bs:s.bs,r:s.r,n:Object.keys(players).length,tr:s.tr,tn:s.tn});DB.set('stats',o)}
   function award(t){
     const res={pid:'-',name:'MC',team:t,ms:0,pts:S.pts,ok:{}};results=Object.assign({},results);results[S.qi]=res;
-    DB.set('results/'+S.qi,res);DB.update('state',{winner:{pid:'-',name:'MC chấm tay',team:t,ms:0,av:'🎤'},manualAw:1,scores:scores()});chime();confetti(70);
+    DB.set('results/'+S.qi,res);DB.update('state',{gain:S.pts,winner:{pid:'-',name:'MC chấm tay',team:t,ms:0,av:'🎤'},manualAw:1,scores:scores()});chime();confetti(70);
   }
   function adv(){
     const ph=S.phase,q=Q[S.qi];
@@ -524,6 +539,7 @@ function host(){
   function reset(){if(!confirm('Xóa toàn bộ người chơi và điểm để chơi lại từ đầu?'))return;used={f:0,a:0,c:0};bots=[];botsOn=0;DB.reset()}
 
   /* --- quyền trợ giúp --- */
+  function bet(t){if(S.phase!='q'||betUsed[t])return;DB.update('state',{bet:S.bet===t?null:t});tone(300,.15,0,.08);tone(450,.15,.12,.08)}
   function l50(){const q=Q[S.qi];if(S.phase!='q'||used.f||q.o.length<3)return;used.f=1;const wr=q.o.map((_,i)=>i).filter(i=>i!==q.a).sort(()=>Math.random()-.5).slice(0,2);DB.update('state',{hide:wr});tone(700,.2)}
   function lau(){if(S.phase!='q'||used.a)return;used.a=1;audOn=1;render()}
   function lca(){if(S.phase!='q'||used.c)return;used.c=1;const d=document.createElement('div');d.className='ov';let t=30;d.innerHTML='📞 Gọi người thân!<small>Mời Đức, Yến hoặc một vị khách lên tư vấn</small><div class="big gold" id="ct">30</div>';document.body.append(d);
@@ -553,7 +569,7 @@ function host(){
     if(e.target.tagName=='INPUT')return;const k=e.key;
     if(k==' '||k=='Enter'||k=='ArrowRight'){e.preventDefault();adv()}
     else if(k=='f'||k=='F')l50();else if(k=='a'||k=='A')lau();else if(k=='c'||k=='C')lca();
-    else if(k=='b'||k=='B')addBots();else if(k=='End')toFinal();else if(k=='r'||k=='R')reset();
+    else if(k=='q'||k=='Q')bet('M');else if(k=='w'||k=='W')bet('F');else if(k=='b'||k=='B')addBots();else if(k=='End')toFinal();else if(k=='r'||k=='R')reset();
   });
   render();
 }
@@ -563,6 +579,7 @@ function host(){
    ===================================================================== */
 function player(){
   const MEK='dy_me'+(P.get('as')||'');const app=$('#app');let me;try{me=JSON.parse(localStorage[MEK]||'null')}catch(e){}
+  let curRid=null;DB.on('rid',v=>{curRid=v;if(me&&v!=null){if(me.rid==null){me.rid=v;try{localStorage[MEK]=JSON.stringify(me)}catch(e){}}else if(me.rid!==v){me=null;try{localStorage.removeItem(MEK)}catch(e){}wm=0;teamSel=avSel=null;my=null;myTs=null;render()}}});
   let S={phase:'lobby'},my=null,myTs=null,off=null,teamSel=null,avSel=null,sc={M:0,F:0},cdI=0,mst=null,offSt=null,lastQ=-9,wm=0;
   DB.on('state',v=>{const p=S;S=v||{phase:'lobby'};
     if(S.qi!==p.qi||(S.phase=='q'&&p.phase!='q')){my=null;myTs=null;off&&off();off=null;if(me&&S.qi>=0)off=DB.on('answers/'+S.qi+'/'+me.pid,a=>{if(a&&a.ts){myTs=a.ts;if(my==null)my=a.o;if(S.phase=='reveal')render()}})}
@@ -584,7 +601,7 @@ function player(){
     const nm=$('#nm'),go=$('#go'),chk=()=>go.disabled=!(nm.value.trim()&&teamSel&&avSel);nm.oninput=chk;chk();
     document.querySelectorAll('.avb').forEach(b=>b.onclick=()=>{avSel=b.dataset.a;document.querySelectorAll('.avb').forEach(x=>x.classList.toggle('on',x===b));chk()});
     document.querySelectorAll('.tbn').forEach(b=>b.onclick=()=>{teamSel=b.dataset.t;document.querySelectorAll('.tbn').forEach(x=>x.classList.toggle('on',x===b));chk()});
-    go.onclick=()=>{const pid=(me&&me.pid)||('p'+Math.random().toString(36).slice(2,9));me={pid,name:nm.value.trim().slice(0,14),team:teamSel,av:avSel};try{localStorage[MEK]=JSON.stringify(me)}catch(e){}
+    go.onclick=()=>{const pid=(me&&me.pid)||('p'+Math.random().toString(36).slice(2,9));me={pid,name:nm.value.trim().slice(0,14),team:teamSel,av:avSel,rid:curRid??0};try{localStorage[MEK]=JSON.stringify(me)}catch(e){}
       DB.set('players/'+pid,{name:me.name,team:me.team,av:me.av,t:TS});
       if(S.qi!=null&&S.qi>=0&&off==null)off=DB.on('answers/'+S.qi+'/'+pid,a=>{if(a&&a.ts){myTs=a.ts;if(my==null)my=a.o}});
       watchMe();render()};
@@ -602,20 +619,20 @@ function player(){
       if(mine)confetti(160);return}
     if(!(S.text&&S.opts))return;
     const opts=arr(S.opts).map(o=>arr(o)),hid=arr(S.hide),txt=arr(S.text);
-    const head=left=>`<div class="pm"><span>Câu ${S.qi+1}/${S.n} · 💰 ${fmt(S.pts)}</span>${left==null?'':ring(left,S.dur)}</div><div class="pq">${esc(txt[0])}${txt[1]?`<small>${esc(txt[1])}</small>`:''}</div>`;
+    const head=left=>`<div class="pm"><span>Câu ${S.qi+1}/${S.n} · 💰 ${fmt(S.pts)}${S.bet?` · 🎲 ${TEAM[S.bet].n} cược!`:''}</span>${left==null?'':ring(left,S.dur)}</div><div class="pq">${esc(txt[0])}${txt[1]?`<small>${esc(txt[1])}</small>`:''}</div>`;
     const btns=cls=>opts.map((o,i)=>`<button class="pb ${hid.includes(i)?'hide':''} ${cls(i)}" data-o="${i}"><b>${'ABCD'[i]}</b><span>${esc(o[0])}${o[1]?`<small style="display:block;color:var(--mu)">${esc(o[1])}</small>`:''}</span></button>`).join('');
     if(ph=='q'){
       const left0=Math.max(0,S.dur-(now()-S.startTs)/1000);
       app.innerHTML=`<div class="p">${bar()}${head(left0)}<div class="po">${btns(i=>my==null?'':(my===i?'sel off':'off'))}</div><p style="text-align:center;font-size:14px;color:var(--mu);min-height:1.4em" id="pst">${my==null?'Chạm vào đáp án thật nhanh! ⚡':'✅ Đã chốt! Chờ kết quả…'}</p></div>`;
       document.querySelectorAll('.pb').forEach(b=>b.onclick=()=>{if(my!=null||S.phase!='q')return;const o=+b.dataset.o;my=o;myTs=Date.now();navigator.vibrate&&navigator.vibrate(30);
         DB.set('answers/'+S.qi+'/'+me.pid,{o,ts:TS});document.querySelectorAll('.pb').forEach(x=>x.classList.add('off'));b.classList.add('sel');$('#pst').textContent='✅ Đã chốt! Chờ kết quả…'});
-      const t=()=>{const l=Math.max(0,S.dur-(now()-S.startTs)/1000);const pr=$('.pring');if(!pr)return;pr.classList.toggle('lo',l<=5);pr.querySelector('.p').style.strokeDashoffset=289*(1-l/S.dur);pr.querySelector('b').textContent=Math.ceil(l)};t();cdI=setInterval(t,250);return}
+      const t=()=>{const l=Math.max(0,S.dur-(now()-S.startTs)/1000);const pr=$('.pring');if(!pr)return;pr.classList.toggle('lo',l<=5);pr.querySelector('.p').style.strokeDashoffset=289*(1-l/S.dur);pr.querySelector('b').textContent=Math.ceil(l);const cc=Math.ceil(l);if(cc<=3&&cc>0&&window._lc!==cc){window._lc=cc;navigator.vibrate&&navigator.vibrate([60,60,60])}};t();cdI=setInterval(t,250);return}
     if(ph=='locked'){app.innerHTML=`<div class="p">${bar()}${head(null)}<div class="po">${btns(i=>my===i?'sel off':'off')}</div><p style="text-align:center;color:var(--gold);font-weight:800">${my==null?'⏰ Hết giờ rồi!':'🔒 Đã khóa · Love Bot sắp lộ đáp án…'}</p></div>`;return}
     if(ph=='reveal'){
       const c=S.correct,right=my!=null&&my===c,w=S.winner,iAmW=w&&w.pid==me.pid,ms=(myTs&&S.startTs)?Math.max(0,myTs-S.startTs)/1000:null;
       const tw=w?TEAM[w.team]:null;
       app.innerHTML=`<div class="p">${bar()}${head(null)}<div class="po" style="grid-auto-rows:minmax(44px,auto)">${btns(i=>i===c?'ok off':(my===i?'no off':'off'))}</div>
-        <div class="rb ${iAmW?'me':right?'ok':'no'}">${iAmW?`<b>🏆 BẠN NHANH NHẤT! +${fmt(S.pts)}</b><span>${ms!=null?ms.toFixed(2)+' giây · ':''}điểm về ${TEAM[me.team].n}</span>`:right?`<b>🎉 Đúng rồi!</b><span>${ms!=null?ms.toFixed(2)+' giây':''}${w?` · nhanh nhất là ${esc(w.name)}`:''}</span>`:`<b>${my==null?'⏰ Không kịp trả lời':'😅 Sai rồi!'}</b><span>${w?`Nhanh nhất: ${esc(w.name)} ${tw.ic} (${(w.ms/1000).toFixed(2)}s)`:'Không ai đúng câu này'}</span>`}</div>
+        <div class="rb ${iAmW?'me':right?'ok':'no'}">${iAmW?`<b>🏆 BẠN NHANH NHẤT! +${fmt(S.gain??S.pts)}</b><span>${ms!=null?ms.toFixed(2)+' giây · ':''}điểm về ${TEAM[me.team].n}</span>`:right?`<b>🎉 Đúng rồi!</b><span>${ms!=null?ms.toFixed(2)+' giây':''}${w?` · nhanh nhất là ${esc(w.name)}`:''}</span>`:`<b>${my==null?'⏰ Không kịp trả lời':'😅 Sai rồi!'}</b><span>${w?`Nhanh nhất: ${esc(w.name)} ${tw.ic} (${(w.ms/1000).toFixed(2)}s)`:'Không ai đúng câu này'}</span>`}</div>
         ${mst?`<div class="pst"><div class="glass"><b>${mst.st>=2?'🔥':''}${mst.st}</b>Chuỗi đúng</div><div class="glass"><b>${mst.c}</b>Câu đúng</div><div class="glass"><b>#${mst.tr||'-'}</b>Hạng đội</div></div>`:''}
         ${S.bot?`<div class="pbot glass"><i>🤖</i><div><small>LOVE BOT</small>${esc(S.bot)}</div></div>`:''}</div>`;
       if(iAmW){confetti(120,innerWidth/2,innerHeight*.5);navigator.vibrate&&navigator.vibrate([60,40,60])}
