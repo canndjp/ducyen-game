@@ -170,6 +170,7 @@ body.hb #bgl{filter:brightness(1.7) saturate(1.5)}#bgl{transition:filter .2s}
 .rhint{text-align:center;color:var(--mu);margin-top:2vh;font-size:clamp(12px,1vw,16px)}
 .prules{margin-top:14px;text-align:left;width:100%}.prules summary{cursor:pointer;text-align:center;font-weight:700;color:var(--gold);padding:10px;border:1px solid var(--ln);border-radius:12px;background:var(--gl)}
 .rp{margin-top:12px;background:var(--gl);border:1px solid var(--ln);border-radius:14px;padding:12px 14px}.rp h3{font-size:15px;color:var(--gold);margin-bottom:6px}.rp h3 i{font-style:normal;margin-right:6px}.rp ul{list-style:none;padding:0}.rp li{font-size:13px;line-height:1.45;margin:5px 0;padding-left:1em;position:relative}.rp li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
+.lgb{display:flex;justify-content:center;gap:10px;margin-bottom:1.4vh}.lgbtn{padding:.55em 1.3em;border-radius:99px;border:2px solid var(--ln);background:var(--gl);font-weight:800;font-size:clamp(13px,1.25vw,20px)}.lgbtn.on{border-color:var(--gold);background:rgba(255,215,106,.25);color:var(--gold)}
 @keyframes fadeIn{from{opacity:0}}
 .pc2:has(.prules[open]){justify-content:flex-start;padding-top:80px;overflow-y:auto;height:100vh;height:100dvh}
 </style></head><body><div id="bgl"><i></i><i></i><i></i></div><canvas id="bg"></canvas><canvas id="fx"></canvas><div id="app"></div>
@@ -401,7 +402,19 @@ const RULES=[
  ['🔥','Điểm thưởng · ボーナス',['<b>Combo:</b> người nhanh nhất đã đúng liên tiếp <b>3–4 câu → ×1.5</b>, từ <b>5 câu → ×2</b>.','<b>🆘 Cứu trợ:</b> đội đang bị bỏ xa từ 3 câu trở lên mà thắng câu này được cộng thêm <b>+0.5</b> vào hệ số.','<b>🎲 Đặt cược:</b> mỗi đội có <b>1 lần</b>. Đội hô to "CƯỢC!" khi câu hỏi đang chạy, MC bấm xác nhận. Đội thắng câu đó được <b>×2</b>; nếu đội kia thắng hoặc không ai đúng thì <b>mất 50%</b> điểm câu đó (không bị âm).','Các hệ số cộng/nhân với nhau, nên một câu có thể ra điểm rất lớn!']],
  ['🛟','Quyền trợ giúp · ヘルプ',['Cả phòng có <b>3 quyền, mỗi quyền dùng 1 lần</b>. Đội nào cần thì hô, MC bấm.','<b>50:50:</b> bỏ đi 2 đáp án sai, còn lại 2 lựa chọn.','<b>👥 Hỏi khán giả:</b> hiện % người chơi đang chọn từng đáp án. Tham khảo thôi, đám đông cũng có lúc sai!','<b>📞 Gọi người thân:</b> 30 giây mời <b>Đức, Yến hoặc một vị khách</b> lên tư vấn.','Mẹo: đừng bấm vội, nhưng cũng đừng chậm, vì người nhanh nhất mới có điểm.']]
 ];
-const rulesHTML=(c)=>RULES.map(r=>`<section class="${c}"><h3><i>${r[0]}</i>${r[1]}</h3><ul>${r[2].map(t=>`<li>${t}</li>`).join('')}</ul></section>`).join('');
+const RULES_JP=[
+['🎮','あそび方',['チームは<b>男性チーム 💙 と女性チーム 💖 の2つ</b>。QRコードを読み取り、アバターとチームを選んで参加します。','1問の制限時間は<b>10秒</b>（「2つの真実と1つの嘘」だけ12秒）。会場の全員が同時にスマホで回答します。','回答は<b>1回だけ</b>。押したら変更できません。間違えても<b>減点はありません</b>。','<b>正解かつ一番早く答えた人</b>（両チーム通して）が、自分のチームの得点を獲得！ほかの正解者はチームの統計に貢献しますが、得点はありません。','後半の問題ほど高得点：<b>100</b>から最大<b>1,000,000ラブコイン</b>まで。全'+ROUND_N+'問を終えて、コインが多いチームが<b>大富豪</b>に！']],
+['🔥','ボーナスポイント',['<b>コンボ：</b>最速回答者が<b>3〜4問連続</b>で正解すると<b>×1.5</b>、<b>5問連続</b>以上で<b>×2</b>。','<b>🆘 救済：</b>3問分以上の差をつけられているチームがその問題で勝つと、倍率に<b>+0.5</b>が加算されます。','<b>🎲 ベット：</b>各チーム<b>1回</b>だけ。問題中に「ベット！」と宣言し、MCが確定します。そのチームが勝てば<b>×2</b>、相手チームが勝つか全員不正解なら、その問題の得点の<b>50%を失います</b>（マイナスにはなりません）。','倍率は足し算・掛け算で重なるので、1問で大量得点も狙えます！']],
+['🛟','ライフライン',['会場全体で<b>3つのライフライン</b>があり、それぞれ<b>1回</b>ずつ使えます。使いたいチームが声を上げ、MCが押します。','<b>50:50：</b>不正解の選択肢を2つ消して、残り2択にします。','<b>👥 オーディエンス：</b>各選択肢を選んでいる参加者の割合を表示。あくまで参考です、みんなが間違えることもあります！','<b>📞 テレフォン：</b>30秒間、<b>ドゥック、イェン、またはゲスト</b>をステージに呼んでアドバイスをもらいます。','コツ：焦りすぎず、でも遅すぎず。一番早い正解者だけが得点できます！']]
+];
+const LANG_KEY='dy_lang';
+let LANG='vi';try{LANG=localStorage[LANG_KEY]==='jp'?'jp':'vi'}catch(e){}
+const langBar=()=>`<div class="lgb"><button class="lgbtn ${LANG=='vi'?'on':''}" onclick="event.stopPropagation();setLang('vi')">🇻🇳 Tiếng Việt</button><button class="lgbtn ${LANG=='jp'?'on':''}" onclick="event.stopPropagation();setLang('jp')">🇯🇵 日本語</button></div>`;
+const rulesPanel=c=>c=='rs'
+  ?`${langBar()}<h2>${LANG=='jp'?'📖 ルール説明':'📖 LUẬT CHƠI <small>ルール説明</small>'}</h2><div class="rcols">${rulesHTML('rs')}</div><p class="rhint">${LANG=='jp'?'L / Esc キー、または画面クリックで閉じる ・ V: Tiếng Việt':'Nhấn L / Esc / bấm vào đây để đóng · J: 日本語'}</p>`
+  :`${langBar()}${rulesHTML('rp')}`;
+function setLang(l){LANG=l=='jp'?'jp':'vi';try{localStorage[LANG_KEY]=LANG}catch(e){}document.querySelectorAll('.rwrap').forEach(w=>{w.innerHTML=rulesPanel(w.dataset.c)})}
+const rulesHTML=(c)=>(LANG=='jp'?RULES_JP:RULES).map(r=>`<section class="${c}"><h3><i>${r[0]}</i>${r[1]}</h3><ul>${r[2].map(t=>`<li>${t}</li>`).join('')}</ul></section>`).join('');
 function host(){
   let players={},answers={},results={},S={phase:'lobby',qi:-1},used={f:0,a:0,c:0},audOn=0,timer=0,botsOn=0,bots=[],lastKey='',auto=0,tipI=0,tipT=0;
   const app=$('#app'),shownN={M:0,F:0};
@@ -433,7 +446,7 @@ function host(){
     return`<div class="ctl">${main?`<button class="btn go" id="mainb">${main}</button>`:''}
       ${ph=='q'?`<button class="btn" id="l50" ${used.f||!q||q.o.length<3?'disabled':''}>50:50 (F)</button><button class="btn" id="lau" ${used.a?'disabled':''}>👥 Hỏi khán giả (A)</button><button class="btn" id="lca" ${used.c?'disabled':''}>📞 Gọi người thân (C)</button><button class="btn m" id="betM" ${betUsed.M?'disabled':''}>🎲 Nam cược (Q)${S.bet=='M'?' ✔':''}</button><button class="btn f" id="betF" ${betUsed.F?'disabled':''}>🎲 Nữ cược (W)${S.bet=='F'?' ✔':''}</button>`:''}
       <span class="sp"></span>
-      ${ph=='lobby'?`<button class="btn" id="brules">📖 Luật chơi (L)</button>`:''}
+      ${ph=='lobby'?`<button class="btn" id="brules">📖 Luật chơi · ルール (L)</button>`:''}
       ${ph=='reveal'?`<span class="hint">Chấm tay:</span><button class="btn m" data-aw="M">+ Nam</button><button class="btn f" data-aw="F">+ Nữ</button>`:''}
       <button class="btn" id="bbots">🤖 Bot thử (B)</button><button class="btn" id="bfin">🏁 Kết thúc (End)</button><button class="btn" id="brst">♻ Reset (R)</button></div>`}
 
@@ -583,7 +596,7 @@ function host(){
 
   /* --- quyền trợ giúp --- */
   function rulesToggle(){const o=document.getElementById('rulesov');if(o){o.remove();return}
-    const d=document.createElement('div');d.id='rulesov';d.className='rulesov';d.innerHTML=`<div class="rbox"><h2>📖 LUẬT CHƠI <small>ルール説明</small></h2><div class="rcols">${rulesHTML('rs')}</div><p class="rhint">Nhấn L / Esc / bấm vào đây để đóng</p></div>`;d.onclick=()=>d.remove();document.body.append(d)}
+    const d=document.createElement('div');d.id='rulesov';d.className='rulesov';d.innerHTML=`<div class="rbox"><div class="rwrap" data-c="rs">${rulesPanel('rs')}</div></div>`;d.onclick=()=>d.remove();document.body.append(d)}
   function bet(t){if(S.phase!='q'||betUsed[t])return;DB.update('state',{bet:S.bet===t?null:t});tone(300,.15,0,.08);tone(450,.15,.12,.08)}
   function l50(){const q=Q[S.qi];if(S.phase!='q'||used.f||q.o.length<3)return;used.f=1;const wr=q.o.map((_,i)=>i).filter(i=>i!==q.a).sort(()=>Math.random()-.5).slice(0,2);DB.update('state',{hide:wr});tone(700,.2)}
   function lau(){if(S.phase!='q'||used.a)return;used.a=1;audOn=1;render()}
@@ -612,7 +625,9 @@ function host(){
 
   document.addEventListener('keydown',e=>{
     if(e.target.tagName=='INPUT')return;const k=e.key;
-    if(document.getElementById('rulesov')&&(k==' '||k=='Enter'||k=='Escape'||k=='l'||k=='L')){e.preventDefault();rulesToggle();return}
+    if(document.getElementById('rulesov')&&(k=='j'||k=='J')){setLang('jp');return}
+  if(document.getElementById('rulesov')&&(k=='v'||k=='V')){setLang('vi');return}
+  if(document.getElementById('rulesov')&&(k==' '||k=='Enter'||k=='Escape'||k=='l'||k=='L')){e.preventDefault();rulesToggle();return}
     if(k=='l'||k=='L'){rulesToggle();return}
     if(k==' '||k=='Enter'||k=='ArrowRight'){e.preventDefault();adv()}
     else if(k=='f'||k=='F')l50();else if(k=='a'||k=='A')lau();else if(k=='c'||k=='C')lca();
@@ -658,7 +673,7 @@ function player(){
     clearInterval(cdI);
     if(!me||!me.av){join();return}
     const ph=S.phase;
-    if(ph=='lobby'||S.qi==null||S.qi<0){app.innerHTML=`<div class="p">${bar()}<div class="pc2"><div class="avbig">${me.av}</div><h2>Đã vào phòng!<small style="font-family:var(--sa);font-size:13px;color:var(--mu)">参加完了！</small></h2><p>Chào <b class="gold">${esc(me.name)}</b> · ${TEAM[me.team].ic} ${TEAM[me.team].n}<br>Chờ MC bắt đầu nhé. Hãy nhìn lên màn hình lớn 👀</p><details class="prules"><summary>📖 Xem luật chơi</summary>${rulesHTML('rp')}</details></div></div>`;return}
+    if(ph=='lobby'||S.qi==null||S.qi<0){app.innerHTML=`<div class="p">${bar()}<div class="pc2"><div class="avbig">${me.av}</div><h2>Đã vào phòng!<small style="font-family:var(--sa);font-size:13px;color:var(--mu)">参加完了！</small></h2><p>Chào <b class="gold">${esc(me.name)}</b> · ${TEAM[me.team].ic} ${TEAM[me.team].n}<br>Chờ MC bắt đầu nhé. Hãy nhìn lên màn hình lớn 👀</p><details class="prules"><summary>📖 Xem luật chơi · ルールを見る</summary><div class="rwrap" data-c="rp">${rulesPanel('rp')}</div></details></div></div>`;return}
     if(ph=='final'){const s=sc,w=s.M==s.F?null:s.M>s.F?'M':'F',mine=w&&w==me.team;
       app.innerHTML=`<div class="p">${bar()}<div class="pc2"><div style="text-align:center;font-size:70px">${w?(mine?'🏆':'🎖️'):'🤝'}</div><h1>${w?`${TEAM[w].n} chiến thắng!`:'Hai đội hòa nhau!'}</h1>
       <div class="rb ${mine?'me':''}"><b>💙 ${fmt(s.M)} · 💖 ${fmt(s.F)}</b><span>${mine?'Đội của bạn là TRIỆU PHÚ! 🎉':'Cảm ơn bạn đã chơi cùng Đức & Yến ♥'}</span></div>
