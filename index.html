@@ -301,8 +301,9 @@ function initDB(cb){
     load('firebase-app-compat.js').then(()=>load('firebase-database-compat.js')).then(()=>{
       firebase.initializeApp(FIREBASE_CONFIG);const d=firebase.database(),root=d.ref('rooms/'+ROOM);
       d.ref('.info/serverTimeOffset').on('value',s=>offset=s.val()||0);
-      DB={mode:'firebase',set:(p,v)=>root.child(p).set(v),update:(p,v)=>root.child(p).update(v),
-        reset:()=>root.set(null),
+      const W=pr=>pr.catch(e=>{const m='⚠ Lỗi ghi Firebase: '+(e&&e.message||e);console.error(m);let t=document.getElementById('dberr');if(!t){t=document.createElement('div');t.id='dberr';t.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#b00020;color:#fff;font:600 13px sans-serif;padding:10px 14px;border-radius:10px';document.body.append(t)}t.textContent=m;throw e});
+      DB={mode:'firebase',set:(p,v)=>W(root.child(p).set(v)),update:(p,v)=>W(root.child(p).update(v)),
+        reset:()=>W(root.set(null)),
         on:(p,f)=>{const r=root.child(p),h=s=>f(s.val());r.on('value',h);return()=>r.off('value',h)}};
       cb()}).catch(()=>{document.body.innerHTML='<p style="padding:30px;font:18px sans-serif">Không kết nối được Firebase. Kiểm tra mạng và cấu hình.</p>'});
   }else{
