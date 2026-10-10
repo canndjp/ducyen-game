@@ -113,11 +113,11 @@ small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.
 .nm{display:flex;flex-wrap:wrap;gap:.5vh .5vw;overflow:hidden;align-content:flex-start}.nm i{font-style:normal;padding:.2em .8em .2em .5em;border-radius:99px;background:var(--gl);font-size:clamp(11px,1.15vw,18px);animation:pop .5s both}
 .tip{min-height:2.6em;display:flex;align-items:center;gap:.8vw;padding:.8vh 1.2vw;border-radius:99px;font-size:clamp(12px,1.3vw,20px);color:var(--sk)}
 .fin{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6vh;text-align:center}
-.fin h1{font:800 clamp(34px,5.8vw,98px)/1.05 var(--se);animation:boom 1.6s both}@keyframes boom{from{transform:scale(2.6);opacity:0;filter:blur(18px)}60%{transform:scale(.95);filter:none}}
+.fin h1{font:800 clamp(28px,min(5.8vw,7.6vh),98px)/1.05 var(--se);animation:boom 1.6s both}@keyframes boom{from{transform:scale(2.6);opacity:0;filter:blur(18px)}60%{transform:scale(.95);filter:none}}
 .fin .row{display:flex;gap:5vw;align-items:flex-start;justify-content:center;width:100%}
-.big{font:800 clamp(24px,3.4vw,56px) var(--se)}.big small{font-family:var(--sa);font-size:.34em}
-.fcol{display:grid;grid-template-columns:1.25fr 1fr;gap:1.6vw;width:min(92vw,1400px);text-align:left}
-.aw{display:grid;grid-template-columns:1fr 1fr;gap:1vh 1vw}
+.big{font:800 clamp(18px,min(3.4vw,4.4vh),56px) var(--se)}.big small{font-family:var(--sa);font-size:.34em}
+.fcol{display:grid;grid-template-columns:minmax(0,1fr);gap:1.2vh;width:min(92vw,1400px);text-align:left}
+.aw{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:1vh 1vw}
 .awc{border-radius:16px;padding:1.2vh 1vw;display:flex;gap:.8vw;align-items:center;animation:up .7s both;animation-delay:var(--d)}
 .awc i{font-style:normal;font-size:4.4vh}.awc b{display:block;font:800 clamp(13px,1.45vw,22px) var(--sa)}.awc span{color:var(--gold);font-weight:700;font-size:clamp(11px,1.15vw,17px)}.awc small{margin:0}
 .mvp{border-radius:16px;padding:1.2vh 1.4vw;font-size:clamp(13px,1.45vw,22px)}.mvp h3{font-family:var(--se);color:var(--gold);margin-bottom:.6vh}.mvp div{display:flex;gap:1vw;justify-content:space-between;padding:.28vh 0;border-bottom:1px dashed rgba(255,255,255,.1)}
@@ -176,6 +176,10 @@ body.hb #bgl{filter:brightness(1.7) saturate(1.5)}#bgl{transition:filter .2s}
 .rp{margin-top:12px;background:var(--gl);border:1px solid var(--ln);border-radius:14px;padding:12px 14px}.rp h3{font-size:15px;color:var(--gold);margin-bottom:6px}.rp h3 i{font-style:normal;margin-right:6px}.rp ul{list-style:none;padding:0}.rp li{font-size:13px;line-height:1.45;margin:5px 0;padding-left:1em;position:relative}.rp li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
 .lgb{display:flex;justify-content:center;gap:10px;margin-bottom:1.4vh}.lgbtn{padding:.55em 1.3em;border-radius:99px;border:2px solid var(--ln);background:var(--gl);font-weight:800;font-size:clamp(13px,1.25vw,20px)}.lgbtn.on{border-color:var(--gold);background:rgba(255,215,106,.25);color:var(--gold)}
 @keyframes fadeIn{from{opacity:0}}
+.mvp .lst{display:grid;grid-template-columns:minmax(0,1fr);column-gap:2vw}.mvp .lst:not(.two){width:min(100%,760px);margin:0 auto}.mvp .lst.two{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--rows,5),auto);grid-auto-flow:column}.mvp .lst>div{min-width:0;gap:.8vw;align-items:center}.mvp .lst>div>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvp .lst>div>.hint{flex:none;white-space:nowrap}
+.mvp{font-size:clamp(11px,min(1.45vw,2.2vh),22px)}
+@media (max-height:780px){.fin{gap:.6vh}.fin h1{font-size:clamp(24px,min(5.8vw,7vh),98px)}.big{font-size:clamp(16px,min(3.4vw,4vh),56px)}.fin .row{gap:3vw}.aw{gap:.5vh .8vw}.awc{padding:.5vh .8vw}.awc i{font-size:3.2vh}.mvp{padding:.6vh 1vw}.mvp h3{margin-bottom:.2vh}.mvp .lst>div{padding:.15vh 0}}
+
 .qa.tight .lanes,.qa.tight .hint{display:none}
 @media (max-height:780px){.h{gap:.8vh}.qc{padding:1vh 2vw}.lane{min-height:3.4vh}.lane>div i{font-size:2.2vh}.ctl .btn{padding:.6vh 1vw}.meta{gap:1vw}}
 .pc2:has(.prules[open]){justify-content:flex-start;padding-top:80px;overflow-y:auto;height:100vh;height:100dvh}
@@ -249,7 +253,7 @@ const ROOM = 'ducyen';
 
 /* =====================================================================
    NGÂN HÀNG CÂU HỎI
-   - Mỗi câu: {k:loại, q:[Việt,Nhật], o:[[Việt,Nhật],...], a:đáp án đúng (0=A,1=B...), n:ghi chú sau khi lộ đáp án, tip:mẹo cho MC}
+   - Mỗi câu: {k:loại, q:[Việt,Nhật], o:[[Việt,Nhật],...], a:đáp án đúng (0=A,1=B...), n:ghi chú sau khi lộ đáp án, tip:không dùng — màn chiếu khách đều đọc được}
    - Muốn thêm nhanh: gõ vào khối EXTRA ở dưới theo dạng  Câu hỏi | A | B | C | D | đáp án(A/B/C/D)
    - Thứ tự trong danh sách = thứ tự chơi. Điểm tăng dần theo bậc thang triệu phú.
    ===================================================================== */
@@ -286,7 +290,7 @@ const QUESTIONS=[
  quiz('Đức thường hạn chế đồ ăn chứa thành phần gì?','ドゥックが控えている食べ物の成分は？',['Muối|塩','Đường|砂糖','Đồ cay|辛いもの','Dầu mỡ|油'],1,'Đường! Cà phê nhớ order ít ngọt nha 😄',''),
  who(['“Anh đứng hình rồi 😂”','「フリーズしちゃった😂」'],1),
  vote('Ai hay thức dậy sớm hơn?','朝早く起きるのはどっち？',0),
- quiz('Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào?','ベトナムでの結婚式はいつ？',['20/9/2026|2026年9月20日','11/10/2026|2026年10月11日','1/1/2026|2026年1月1日','14/2/2026|2026年2月14日'],0,'20/9/2026 — ngày trọng đại ở quê nhà! 💒','Ngày 20/9 trùng sinh nhật sếp của Yến — chắc chắn sẽ có người nhớ, gợi ý nhẹ cho khách nếu cần 😄'),
+ quiz('Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào?','ベトナムでの結婚式はいつ？',['20/9/2026|2026年9月20日','11/10/2026|2026年10月11日','1/1/2026|2026年1月1日','14/2/2026|2026年2月14日'],0,'20/9/2026 — ngày trọng đại ở quê nhà! 💒'),
  quiz('Hai bạn đi tuần trăng mật ở đâu?','ハネムーンの行き先は？',['Đà Lạt|ダラット','Phú Quốc|フーコック','Sapa|サパ','Hokkaido|北海道'],2,'Sapa — săn mây, ôm nhau cho đỡ lạnh 🌫️❄️'),
  vote('Ai nói nhiều hơn?','おしゃべりなのはどっち？',1),
  lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức làm việc tại nghiệp đoàn được 3 năm rưỡi|ドゥックは監理団体で3年半働いている','Đức thường hạn chế ăn đường|ドゥックは砂糖を控えている','Yến sang Nhật từ tháng 4/2024|イェンは2024年4月に来日した'],2,'Yến sang Nhật từ tháng 10/2025 nhé! ✈️'),
@@ -316,17 +320,33 @@ const ROUND_N=Math.max(4,Math.min(+new URLSearchParams(location.search).get('n')
 const SEEN_KEY='dy_seen_'+ROOM;             /* host nhớ câu nào đã chơi để các lượt sau không trùng */
 const seenGet=()=>{try{return JSON.parse(localStorage[SEEN_KEY]||'[]')}catch(e){return[]}};
 const seenAdd=i=>{try{const s=seenGet();if(!s.includes(i)){s.push(i);localStorage[SEEN_KEY]=JSON.stringify(s)}}catch(e){}};
-const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-function pickRound(){
-  const fin=POOL.length-1,need=ROUND_N-1,all=[...Array(fin).keys()];
-  const seen=seenGet().filter(i=>i<fin);
-  let pick=shuf(all.filter(i=>!seen.includes(i))).slice(0,need);
-  if(pick.length<need){                     /* hết câu mới -> bắt đầu vòng mới, bù thêm từ các câu cũ */
-    try{localStorage[SEEN_KEY]='[]'}catch(e){}
-    pick=pick.concat(shuf(all.filter(i=>!pick.includes(i))).slice(0,need-pick.length));
-  }
-  return shuf(pick).concat([fin]);
-}
+   const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+   /* Các cặp câu KHÔNG được xuất hiện cùng một ván vì câu này làm lộ đáp án câu kia.
+      Mỗi mục: [đoạn chữ nhận diện câu A, [đoạn chữ nhận diện các câu B...]] — tìm trong nội dung câu hỏi + đáp án (không phân biệt hoa/thường).
+      Sửa nội dung câu hỏi thì nhớ sửa đoạn chữ tương ứng ở đây (không khớp thì mục đó bị bỏ qua, không gây lỗi). */
+   const CONFLICTS=[
+     ['cầu hôn Yến ngay tại sân Emirates',['Đức đã học tập và sống ở Nhật bao lâu','Quê của cả hai bạn ở đâu','Màn cầu hôn bí mật diễn ra ở đâu']],
+     ['Yến sang Nhật từ tháng 4/2024',['Đức làm việc tại nghiệp đoàn được bao lâu','Đức thường hạn chế đồ ăn chứa thành phần gì','Yến sang Nhật vào thời gian nào']],
+     ['Đức cổ vũ cho CLB nào',['Arsenal vô địch thì']],
+     ['Đức thuộc cung hoàng đạo nào',['Yến thuộc cung hoàng đạo nào']],
+     ['Lễ báo hỷ hôm nay diễn ra ngày nào',['Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào']]
+   ];
+   const QTXT=POOL.map(q=>(q.q[0]+' '+q.o.map(o=>o[0]).join(' ')).toLowerCase());
+   const findQ=t=>QTXT.map((x,i)=>x.includes(t.toLowerCase())?i:-1).filter(i=>i>=0);
+   const CLASH=new Set();CONFLICTS.forEach(([a,bs])=>findQ(a).forEach(i=>bs.forEach(b=>findQ(b).forEach(j=>{if(i!==j){CLASH.add(i+'-'+j);CLASH.add(j+'-'+i)}}))));
+   const clash=(i,j)=>CLASH.has(i+'-'+j);
+   function pickRound(){
+     const fin=POOL.length-1,need=ROUND_N-1,all=[...Array(fin).keys()];
+     const seen=seenGet().filter(i=>i<fin);
+     const take=(cands,pick)=>{for(const i of cands){if(pick.length>=need)break;if(pick.includes(i)||pick.some(j=>clash(i,j)))continue;pick.push(i)}return pick};
+     let pick=take(shuf(all.filter(i=>!seen.includes(i))),[]);
+     if(pick.length<need){                     /* hết câu mới -> bắt đầu vòng mới, bù thêm từ các câu cũ (vẫn tránh cặp lộ đáp án) */
+       try{localStorage[SEEN_KEY]='[]'}catch(e){}
+       pick=take(shuf(all),pick);
+     }
+     if(pick.length<need)pick=pick.concat(shuf(all.filter(i=>!pick.includes(i))).slice(0,need-pick.length));   /* kho quá nhỏ: đành chấp nhận */
+     return shuf(pick).concat([fin]);
+   }
 let Q=POOL.slice(0,ROUND_N-1).concat(POOL.slice(-1));   /* tạm thời, host sẽ thay bằng thứ tự ngẫu nhiên của lượt chơi */
 
 /* ---------- Điểm: bậc thang triệu phú ---------- */
@@ -531,7 +551,7 @@ function host(){
       <div class="qc glass"><h2 class="qt">${bi(q.q)}</h2></div>
       <div class="ops ${cls}">${q.o.map((o,i)=>`<div class="op ${hid.includes(i)?'hide':''} ${rv?(i===S.correct?'ok':'dim'):''}" style="--w:${S.total?Math.round((dist[i]||0)/S.total*100):0}%;--d:${.5+i*.12}s"><div class="pc"></div><b>${'ABCD'[i]}</b><span>${bi(o)}</span><em>${rv?`${S.total?Math.round((dist[i]||0)/S.total*100):0}% · ${dist[i]||0}`:''}</em></div>`).join('')}</div>
       ${!rv?`<div class="lanes"><div class="lane m"><span>${TEAM.M.ic} Nam</span><div id="lnM"></div><b id="lcM">0</b></div><div class="lane f"><span>${TEAM.F.ic} Nữ</span><div id="lnF"></div><b id="lcF">0</b></div></div><div class="hint" style="text-align:center;font-size:clamp(11px,1.2vw,18px)" id="ltot"></div><div id="aud"></div>
-      ${q.tip?`<div class="hint" style="text-align:center;font-size:12px">💡 Mẹo MC: ${esc(q.tip)}</div>`:''}`:resultHTML()}
+      `:resultHTML()}
     </div><div class="lad">${ladder()}</div></div>${ctlBar()}${modeTag()}</div>`;
     shownN.M=shownN.F=-1;
     if(ph=='q')tick();
@@ -622,7 +642,7 @@ function host(){
     else if(ph=='reveal'){S.qi>=Q.length-1?toFinal():startQ(S.qi+1)}
   }
   function toFinal(){if(S.phase=='final')return;writeStats();DB.update('state',{phase:'final',scores:scores(),qi:Math.max(S.qi,0),ver:Date.now()})}
-  function reset(){if(!confirm('Xóa toàn bộ người chơi và điểm để chơi lại từ đầu?'))return;used={f:0,a:0,c:0};bots=[];botsOn=0;DB.reset()}
+  function reset(){if(!confirm('Xóa toàn bộ người chơi, điểm và danh sách câu đã chơi để chơi lại từ đầu?'))return;used={f:0,a:0,c:0};bots=[];botsOn=0;try{localStorage.removeItem(SEEN_KEY)}catch(e){}DB.reset()}
 
   /* --- quyền trợ giúp --- */
   function rulesToggle(){const o=document.getElementById('rulesov');if(o){o.remove();return}
@@ -643,7 +663,7 @@ function host(){
       <h1>${T?`${T.ic} ${T.n.toUpperCase()}<br><span class="gold">LÀ TRIỆU PHÚ!</span>`:'🤝 HAI ĐỘI HÒA NHAU!<br><span class="gold">CÙNG LÀ TRIỆU PHÚ!</span>'}</h1>
       <div class="row"><div class="big nam">${TEAM.M.ic} ${TEAM.M.n}<br>${fmt(s.M)} xu<small>${TEAM.M.jp}</small></div><div class="big nu">${TEAM.F.ic} ${TEAM.F.n}<br>${fmt(s.F)} xu<small>${TEAM.F.jp}</small></div></div>
       ${AW.length||list.length?`<div class="fcol"><div class="aw">${AW.map((a,i)=>`<div class="awc glass" style="--d:${.6+i*.2}s"><i>${a[0]}</i><div><small>${a[1]}</small><b>${a[2].av} ${esc(a[2].name)} ${TEAM[a[2].team].ic}</b><span>${a[3]}</span></div></div>`).join('')}</div>
-        <div class="mvp glass"><h3>🏅 Bảng xếp hạng cá nhân</h3>${list.slice(0,5).map((x,i)=>`<div><span>${['🥇','🥈','🥉','4.','5.'][i]} ${x.av} ${esc(x.name)} ${TEAM[x.team].ic}</span><span class="hint">${x.w} nhanh nhất · ${x.c} đúng</span></div>`).join('')}</div></div>`:''}
+        <div class="mvp glass"><h3>🏅 Bảng xếp hạng cá nhân</h3><div class="lst ${list.length>5?'two':''}" style="--rows:${Math.ceil(Math.min(10,list.length)/2)}">${list.slice(0,10).map((x,i)=>`<div><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${x.av} ${esc(x.name)} ${TEAM[x.team].ic}</span><span class="hint">${list.length>5?`⚡${x.w} · ✔${x.c}`:`${x.w} nhanh nhất · ${x.c} đúng`}</span></div>`).join('')}</div></div></div>`:''}
     </div>${ctlBar()}${modeTag()}</div>`;
     setTimeout(()=>{chime();confetti(220);setTimeout(()=>confetti(160,innerWidth*.2,innerHeight*.4),500);setTimeout(()=>confetti(160,innerWidth*.8,innerHeight*.4),900)},300);
   }
@@ -659,7 +679,7 @@ function host(){
   if(document.getElementById('rulesov')&&(k=='v'||k=='V')){setLang('vi');return}
   if(document.getElementById('rulesov')&&(k==' '||k=='Enter'||k=='Escape'||k=='l'||k=='L')){e.preventDefault();rulesToggle();return}
     if(k=='l'||k=='L'){rulesToggle();return}
-    if(k==' '||k=='Enter'||k=='ArrowRight'){e.preventDefault();adv()}
+    if(k==' '||k=='Enter'||k=='ArrowRight'){e.preventDefault();if(e.repeat)return;if(S.phase=='lobby'&&k!=' ')return;adv()}
     else if(k=='f'||k=='F')l50();else if(k=='a'||k=='A')lau();else if(k=='c'||k=='C')lca();
     else if(k=='q'||k=='Q')bet('M');else if(k=='w'||k=='W')bet('F');else if(k=='b'||k=='B')addBots();else if(k=='End')toFinal();else if(k=='r'||k=='R')reset();
   });
