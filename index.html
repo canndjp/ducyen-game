@@ -123,6 +123,20 @@ small{display:block;font-weight:400;color:var(--mu);font-size:.62em;margin-top:.
 .mvp{border-radius:16px;padding:1.2vh 1.4vw;font-size:clamp(13px,1.45vw,22px)}.mvp h3{font-family:var(--se);color:var(--gold);margin-bottom:.6vh}.mvp div{display:flex;gap:1vw;justify-content:space-between;padding:.28vh 0;border-bottom:1px dashed rgba(255,255,255,.1)}
 .ov{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;padding:3vh 3vw;border-radius:24px;background:rgba(20,8,30,.96);border:3px solid var(--gold);font:800 clamp(20px,2.8vw,44px) var(--se);text-align:center;box-shadow:0 0 90px rgba(255,215,106,.5)}.ov small{font-family:var(--sa)}
 .mode{position:fixed;left:50%;bottom:.6vh;transform:translateX(-50%);font-size:11px;color:var(--mu);z-index:9}
+.pinw{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;overflow-y:auto}
+.pinb{width:min(92vw,440px);padding:3.2vh 5vw;text-align:center;border:2px solid var(--gold);border-radius:22px;background:rgba(20,8,30,.94)}
+.pinb h2{font:800 clamp(22px,3vw,34px) var(--se);margin:.4em 0 .1em}.pinb .pi{font-size:clamp(34px,5vh,52px)}
+.pinb small{display:block;color:var(--mu);font-size:clamp(12px,1.5vw,15px);margin-bottom:1.6vh}
+.pinb input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:14px;border:2px solid var(--ln);background:rgba(255,255,255,.08);color:var(--tx);font:800 clamp(22px,3vw,32px) var(--sa);letter-spacing:.35em;text-align:center;outline:none}
+.pinb input:focus{border-color:var(--gold)}.pinb input:disabled{opacity:.45}
+.pinb .btn{width:100%;margin-top:12px;font-size:clamp(16px,2vw,20px);padding:12px;cursor:pointer}
+#pinerr{min-height:1.4em;margin-top:10px;color:#ff8fa3;font-weight:700;font-size:clamp(13px,1.6vw,16px)}
+@keyframes shk{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}.pinb.bad{animation:shk .4s}
+.dlg{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(5,2,12,.74);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.dbox{width:min(90vw,600px);padding:3vh 3vw;text-align:center;border:2px solid var(--gold);border-radius:20px;background:rgba(20,8,30,.96)}
+.dmsg{font:700 clamp(16px,1.7vw,26px)/1.45 var(--sa);margin-bottom:2.4vh}.dmsg small{font-weight:500;font-size:.72em;color:var(--mu);margin-top:.6vh}
+.dbtn{display:flex;gap:1.2vw;justify-content:center;flex-wrap:wrap}.dbtn .btn{font-size:clamp(14px,1.3vw,20px);padding:1.1vh 1.8vw;cursor:pointer}
+.flash{position:fixed;left:50%;bottom:13vh;transform:translateX(-50%);white-space:nowrap;z-index:70;max-width:90vw;padding:1.2vh 2vw;border-radius:14px;background:rgba(20,8,30,.96);border:2px solid var(--gold);font:700 clamp(14px,1.5vw,24px) var(--sa);text-align:center;animation:fadeIn .3s}
 
 /* ============ PLAYER ============ */
 .p{height:100dvh;display:flex;flex-direction:column;padding:0 14px max(14px,env(safe-area-inset-bottom));gap:10px;max-width:520px;margin:0 auto;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
@@ -250,6 +264,10 @@ const FIREBASE_CONFIG = {
 };*/
 // 2) Tên phòng (đổi nếu muốn chơi nhiều ván độc lập)
 const ROOM = 'ducyen';
+// 3) Mã PIN mở màn hình MC. Để trống '' = không dùng PIN.
+//    Link MC: .../?host=1 (hiện ô nhập PIN)  hoặc  .../?host=MÃ_PIN (mở thẳng, dùng cho link trong slide).
+//    LƯU Ý: PIN nằm trong file này nên chỉ chặn khách mở nhầm/tò mò, không phải bảo mật tuyệt đối.
+const HOST_PIN = '7391';
 
 /* =====================================================================
    NGÂN HÀNG CÂU HỎI
@@ -266,10 +284,10 @@ const vote=(q,jp,a,both)=>({k:'AI HƠN AI? · どっち？',q:[q,jp],o:both?WHO.
 const lie=(q,jp,opts,a,n)=>({k:'2 SỰ THẬT 1 LỜI NÓI DỐI · 二つの真実と一つの嘘',q:[q,jp],o:opts.map(o2),a,n,dur:12});
 
 const QUESTIONS=[
- quiz('Đức cổ vũ cho CLB nào?','新郎が応援するクラブは？',['Chelsea|チェルシー','Man United|マンU','Arsenal|アーセナル','Liverpool|リバプール'],2,'COYG! 🔴 Come On You Gunners!<br>COYG！ガナーズ頑張れ！'),
- quiz('Hai bạn làm quen nhau từ đâu?','二人の出会いのきっかけは？',['Ứng dụng Threads|Threadsアプリ','Bạn bè mai mối|友人の紹介','Đi xem bóng đá|サッカー観戦','Họp lớp|同窓会'],0,'Một bài đăng, một comment… rồi nói mãi không dừng! 💬'),
+ quiz('Đức cổ vũ cho CLB nào?','新郎が応援するクラブは？',['Chelsea|チェルシー','Man United|マンU','Liverpool|リバプール','Arsenal|アーセナル'],3,'COYG! 🔴 Come On You Gunners!<br>COYG！ガナーズ頑張れ！'),
+ quiz('Hai bạn làm quen nhau từ đâu?','二人の出会いのきっかけは？',['Bạn bè mai mối|友人の紹介','Đi xem bóng đá|サッカー観戦','Họp lớp|同窓会','Ứng dụng Threads|Threadsアプリ'],3,'Một bài đăng, một comment… rồi nói mãi không dừng! 💬'),
  quiz('Quê của cả hai bạn ở đâu?','二人の故郷はどこ？',['Hà Nội|ハノイ','Hải Phòng|ハイフォン','Đà Nẵng|ダナン','Tokyo|東京'],1,'Cùng là người Hải Phòng! 🌸'),
- quiz('Yến làm nghề gì?','イェンの職業は？',['Nhân viên văn phòng|会社員','Phi công|パイロット','Cầu thủ bóng đá|サッカー選手','Đầu bếp|シェフ'],0,'Nhân viên văn phòng, chăm chỉ và dễ thương! 💼'),
+ quiz('Yến làm nghề gì?','イェンの職業は？',['Phi công|パイロット','Cầu thủ bóng đá|サッカー選手','Đầu bếp|シェフ','Nhân viên văn phòng|会社員'],3,'Nhân viên văn phòng, chăm chỉ và dễ thương! 💼'),
  quiz('Đức đã học tập và sống ở Nhật bao lâu?','ドゥックは日本で何年暮らしている？',['3 năm|3年','5 năm|5年','10 năm|10年','20 năm|20年'],2,'Tròn 10 năm! Gần như một người Nhật rồi 🇯🇵'),
  vote('Ai là người “say nắng” trước?','先に好きになったのはどっち？',2,1),
  quiz('Màn cầu hôn bí mật diễn ra ở đâu?','サプライズプロポーズの場所は？',['Tokyo|東京','Hải Phòng|ハイフォン','Hà Nội|ハノイ','Sân Emirates|エミレーツ'],1,'Về quê cầu hôn, đúng chất Hải Phòng! ❤️'),
@@ -278,30 +296,30 @@ const QUESTIONS=[
  quiz('Yến thuộc cung hoàng đạo nào?','イェンの星座は？',['Xử Nữ|おとめ座','Song Ngư|うお座','Kim Ngưu|おうし座','Bảo Bình|みずがめ座'],1,'Song Ngư 🐟 — lãng mạn, mơ mộng! Cự Giải và Song Ngư đều là cung Nước, nghe nói rất hợp nhau 💧'),
  who(['“Để anh xem nốt hiệp 2 đã!”','「ちょっと待って、後半だけ見させて！」'],0),
  who(['“Em không giận đâu… (đang giận)”','「怒ってないよ…（怒ってる）」'],1),
- quiz('Màu outfit đi làm quen thuộc nhất của Đức?','ドゥックの仕事着で一番見慣れた色は？',['Áo trắng quần đen|白シャツ×黒パンツ','Áo đen quần trắng|黒シャツ×白パンツ','Vest xám|グレーのスーツ','Áo thun quần jeans|Tシャツ×ジーンズ'],0,'Áo trắng quần đen — gọn gàng, lịch sự! 👔'),
+ quiz('Màu outfit đi làm quen thuộc nhất của Đức?','ドゥックの仕事着で一番見慣れた色は？',['Áo đen quần trắng|黒シャツ×白パンツ','Vest xám|グレーのスーツ','Áo thun quần jeans|Tシャツ×ジーンズ','Áo trắng quần đen|白シャツ×黒パンツ'],3,'Áo trắng quần đen — gọn gàng, lịch sự! 👔'),
  vote('Ai nấu ăn ngon hơn?','料理が上手なのはどっち？',1),
- quiz('Yến sang Nhật vào thời gian nào?','イェンが来日したのはいつ？',['Tháng 4/2024|2024年4月','Tháng 10/2025|2025年10月','Tháng 1/2025|2025年1月','Tháng 7/2025|2025年7月'],1,'Tháng 10/2025 — và thế là hết yêu xa! ✈️'),
- quiz('Lễ báo hỷ hôm nay diễn ra ngày nào?','今日の披露宴は何日？',['1.1.2026|2026年1月1日','11.10.2026|2026年10月11日','25.12.2026|2026年12月25日','14.2.2026|2026年2月14日'],1,'Chính là hôm nay, 11.10.2026! 🎉'),
+ quiz('Yến sang Nhật vào thời gian nào?','イェンが来日したのはいつ？',['Tháng 4/2024|2024年4月','Tháng 1/2025|2025年1月','Tháng 7/2025|2025年7月','Tháng 10/2025|2025年10月'],3,'Tháng 10/2025 — và thế là hết yêu xa! ✈️'),
+ quiz('Lễ báo hỷ hôm nay diễn ra ngày nào?','今日の披露宴は何日？',['1.1.2026|2026年1月1日','14.2.2026|2026年2月14日','11.10.2026|2026年10月11日','25.12.2026|2026年12月25日'],2,'Chính là hôm nay, 11.10.2026! 🎉'),
  quiz('“Arsenal vô địch thì…” là lời hẹn gì?','「アーセナルが優勝したら…」何の約束？',['Đi du lịch|旅行','Mua nhà|家を買う','Tổ chức đám cưới|結婚式を挙げる','Nuôi mèo|猫を飼う'],2,'Arsenal vô địch → lời hẹn thành sự thật! 💍'),
- lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức đã sống và học tập ở Nhật 10 năm|ドゥックは日本で10年暮らし、学んできた','Hai bạn đều là người Hải Phòng|二人ともハイフォン出身','Đức cầu hôn Yến ngay tại sân Emirates|ドゥックはエミレーツ・スタジアムでプロポーズした'],2,'Màn cầu hôn diễn ra ở Hải Phòng ✈️❤️'),
+ lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức cầu hôn Yến ngay tại sân Emirates|ドゥックはエミレーツ・スタジアムでプロポーズした','Đức đã sống và học tập ở Nhật 10 năm|ドゥックは日本で10年暮らし、学んできた','Hai bạn đều là người Hải Phòng|二人ともハイフォン出身'],0,'Màn cầu hôn diễn ra ở Hải Phòng ✈️❤️'),
  who(['“Mạng lag chứ tim anh không lag!”','「回線は重くても、僕の心は重くないよ！」'],0),
  quiz('Đức làm việc tại nghiệp đoàn được bao lâu rồi?','ドゥックが監理団体で働いて、どのくらい？',['1 năm|1年','3 năm rưỡi|3年半','5 năm|5年','8 năm|8年'],1,'3 năm rưỡi gắn bó với nghiệp đoàn! 💼'),
  vote('Ai hay “dỗi” hơn?','よく拗ねるのはどっち？',1),
  quiz('Đức thường hạn chế đồ ăn chứa thành phần gì?','ドゥックが控えている食べ物の成分は？',['Muối|塩','Đường|砂糖','Đồ cay|辛いもの','Dầu mỡ|油'],1,'Đường! Cà phê nhớ order ít ngọt nha 😄',''),
  who(['“Anh đứng hình rồi 😂”','「フリーズしちゃった😂」'],1),
  vote('Ai hay thức dậy sớm hơn?','朝早く起きるのはどっち？',0),
- quiz('Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào?','ベトナムでの結婚式はいつ？',['20/9/2026|2026年9月20日','11/10/2026|2026年10月11日','1/1/2026|2026年1月1日','14/2/2026|2026年2月14日'],0,'20/9/2026 — ngày trọng đại ở quê nhà! 💒'),
+ quiz('Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào?','ベトナムでの結婚式はいつ？',['1/1/2026|2026年1月1日','14/2/2026|2026年2月14日','20/9/2026|2026年9月20日','11/10/2026|2026年10月11日'],2,'20/9/2026 — ngày trọng đại ở quê nhà! 💒'),
  quiz('Hai bạn đi tuần trăng mật ở đâu?','ハネムーンの行き先は？',['Đà Lạt|ダラット','Phú Quốc|フーコック','Sapa|サパ','Hokkaido|北海道'],2,'Sapa — săn mây, ôm nhau cho đỡ lạnh 🌫️❄️'),
  vote('Ai nói nhiều hơn?','おしゃべりなのはどっち？',1),
- lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức làm việc tại nghiệp đoàn được 3 năm rưỡi|ドゥックは監理団体で3年半働いている','Đức thường hạn chế ăn đường|ドゥックは砂糖を控えている','Yến sang Nhật từ tháng 4/2024|イェンは2024年4月に来日した'],2,'Yến sang Nhật từ tháng 10/2025 nhé! ✈️'),
- quiz('Tết Việt Nam, người lớn thường lì xì trong bao màu gì?','ベトナムのお正月、お年玉の袋は何色？',['Đỏ|赤','Trắng|白','Đen|黒','Xanh dương|青'],0,'Bao đỏ lì xì mang may mắn! Nhật có “otoshidama” (お年玉) giống hệt vậy 🧧'),
+ lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức làm việc tại nghiệp đoàn được 3 năm rưỡi|ドゥックは監理団体で3年半働いている','Yến sang Nhật từ tháng 4/2024|イェンは2024年4月に来日した','Đức thường hạn chế ăn đường|ドゥックは砂糖を控えている'],1,'Yến sang Nhật từ tháng 10/2025 nhé! ✈️'),
+ quiz('Tết Việt Nam, người lớn thường lì xì trong bao màu gì?','ベトナムのお正月、お年玉の袋は何色？',['Trắng|白','Đen|黒','Xanh dương|青','Đỏ|赤'],3,'Bao đỏ lì xì mang may mắn! Nhật có “otoshidama” (お年玉) giống hệt vậy 🧧'),
  quiz('Đêm giao thừa ở Nhật, người ta thường ăn món gì?','日本の大晦日に食べるものは？',['Mì soba|年越しそば','Sushi|寿司','Lẩu|鍋','Bánh bao|肉まん'],0,'Toshikoshi soba 🍜 — ăn mì dài để sống lâu, cắt đứt vận xui năm cũ!'),
  quiz('“Cạn ly!” trong tiếng Nhật nói thế nào?','「乾杯」は何と言う？',['Itadakimasu|いただきます','Arigatou|ありがとう','Kanpai|乾杯','Sumimasen|すみません'],2,'Kanpai! 🍻 Còn Việt Nam hô: “Một, hai, ba, dô!”'),
- quiz('Người Nhật nói “Itadakimasu” vào lúc nào?','「いただきます」はいつ言う？',['Trước khi ăn|食べる前','Sau khi ăn|食べた後','Trước khi ngủ|寝る前','Khi chào tạm biệt|別れるとき'],0,'Trước bữa ăn, để cảm ơn món ăn và người nấu 🙏 Sau bữa ăn sẽ nói “Gochisousama”.'),
+ quiz('Người Nhật nói “Itadakimasu” vào lúc nào?','「いただきます」はいつ言う？',['Sau khi ăn|食べた後','Trước khi ngủ|寝る前','Khi chào tạm biệt|別れるとき','Trước khi ăn|食べる前'],3,'Trước bữa ăn, để cảm ơn món ăn và người nấu 🙏 Sau bữa ăn sẽ nói “Gochisousama”.'),
  quiz('Mừng cưới ở Nhật, người ta bỏ tiền vào phong bì gọi là gì?','日本で結婚式のお祝い金を何と言う？',['Otoshidama|お年玉','Goshugi|ご祝儀','Omiyage|お土産','Okaeshi|お返し'],1,'Goshugi (ご祝儀)! Việt Nam cũng mừng cưới bằng phong bì — hai nước giống nhau ghê 💌'),
  quiz('Cắm đũa thẳng đứng vào bát cơm bị kiêng ở cả hai nước vì giống gì?','お箸をご飯に立てるのがタブーなのはなぜ？',['Nén hương cúng người mất|仏前のお線香','Cây tre|竹','Báo hiệu ăn xong|食べ終わりの合図','Lời chúc may mắn|縁起がいい'],0,'Giống nén hương trên bàn thờ nên là điều đại kỵ ở cả Việt Nam lẫn Nhật Bản 🥢'),
  quiz('Ô tô ở Nhật chạy bên nào của đường?','日本の車はどちら側を走る？',['Bên trái|左側','Bên phải|右側','Ở giữa|真ん中','Tùy nơi|場所による'],0,'Nhật đi bên trái, Việt Nam đi bên phải. Sang đường nhớ nhìn kỹ nhé! 🚗'),
- quiz('Loài hoa nào thường được xem là biểu tượng của Việt Nam?','ベトナムの象徴とされる花は？',['Hoa sen|ハス（蓮）','Hoa anh đào|桜','Hoa cúc|菊','Hoa mai|梅'],0,'Hoa sen 🪷 — thanh cao, giản dị. Còn Nhật Bản gắn với hoa anh đào 🌸'),
+ quiz('Loài hoa nào thường được xem là biểu tượng của Việt Nam?','ベトナムの象徴とされる花は？',['Hoa anh đào|桜','Hoa cúc|菊','Hoa mai|梅','Hoa sen|ハス（蓮）'],3,'Hoa sen 🪷 — thanh cao, giản dị. Còn Nhật Bản gắn với hoa anh đào 🌸'),
  quiz('Theo Điều 1 của hợp đồng, ai luôn đúng?','契約第1条によると、いつも正しいのは誰？',['Chú rể|新郎','Cô dâu (Vợ)|新婦（妻）','Trọng tài VAR|VAR審判','Love Bot|ラブボット'],1,'Điều 1: Vợ luôn đúng! 👰✅'),
 ];
 
@@ -642,7 +660,21 @@ function host(){
     else if(ph=='reveal'){S.qi>=Q.length-1?toFinal():startQ(S.qi+1)}
   }
   function toFinal(){if(S.phase=='final')return;writeStats();DB.update('state',{phase:'final',scores:scores(),qi:Math.max(S.qi,0),ver:Date.now()})}
-  function reset(){if(!confirm('Xóa toàn bộ người chơi, điểm và danh sách câu đã chơi để chơi lại từ đầu?'))return;used={f:0,a:0,c:0};bots=[];botsOn=0;try{localStorage.removeItem(SEEN_KEY)}catch(e){}DB.reset()}
+  /* Hộp xác nhận nằm TRONG trang: confirm() của trình duyệt có thể bị chặn khi game được nhúng trong slide (iframe) nên Reset lúc được lúc không */
+  function flash(m){const t=document.createElement('div');t.className='flash';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),3600)}
+  function askConfirm(msg,okText,onOk){
+    if(document.getElementById('dlg'))return;
+    const d=document.createElement('div');d.id='dlg';d.className='dlg';
+    d.innerHTML=`<div class="dbox glass"><div class="dmsg">${msg}</div><div class="dbtn"><button class="btn" id="dno">Hủy (Esc)</button><button class="btn go" id="dyes">${okText} (Enter)</button></div></div>`;
+    const close=()=>{d.remove();window.removeEventListener('keydown',kh,true)};
+    const kh=e=>{e.preventDefault();e.stopPropagation();if(e.repeat)return;if(e.key=='Escape')close();else if(e.key=='Enter'){close();onOk()}};   /* đang hỏi: chặn mọi phím tắt khác */
+    window.addEventListener('keydown',kh,true);
+    d.querySelector('#dno').onclick=close;d.querySelector('#dyes').onclick=()=>{close();onOk()};d.onclick=e=>{if(e.target===d)close()};
+    document.body.append(d);if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+  }
+  function doReset(){used={f:0,a:0,c:0};bots=[];botsOn=0;try{localStorage.removeItem(SEEN_KEY)}catch(e){}
+    Promise.resolve(DB.reset()).then(()=>flash('✅ Đã reset · xáo lại '+ROUND_N+' câu mới')).catch(()=>flash('⚠ Reset chưa thành công — kiểm tra mạng rồi bấm lại'))}
+  function reset(){askConfirm('Xóa toàn bộ người chơi, điểm và danh sách câu đã chơi để chơi lại từ đầu?<small>Bộ câu hỏi sẽ được xáo ngẫu nhiên lại.</small>','Xóa &amp; chơi lại',doReset)}
 
   /* --- quyền trợ giúp --- */
   function rulesToggle(){const o=document.getElementById('rulesov');if(o){o.remove();return}
@@ -699,7 +731,10 @@ function player(){
     if(S.scores)sc={M:S.scores.M||0,F:S.scores.F||0};
     render()});
   function watchMe(){if(wm||!me)return;wm=1;
-    DB.on('players/'+me.pid,v=>{if(!v&&me)DB.set('players/'+me.pid,{name:me.name,team:me.team,av:me.av,t:TS})});
+    const mypid=me.pid;let inDB=true;
+    DB.on('players/'+mypid,v=>{inDB=!!v;if(v||!me||me.pid!==mypid)return;
+      setTimeout(()=>{if(inDB||!me||me.pid!==mypid)return;if(curRid!=null&&me.rid!==curRid)return;   /* phòng vừa được Reset thì KHÔNG tự thêm lại */
+        DB.set('players/'+mypid,{name:me.name,team:me.team,av:me.av,t:TS})},1500)});
     DB.on('stats/'+me.pid,v=>{mst=v;if(S.phase=='reveal'||S.phase=='final')render()})}
   const tugR=()=>{const t=sc.M+sc.F;return t?sc.M/t*100:50};
   const bar=()=>`<div class="pt"><span class="who ${TEAM[me.team].c}"><i>${me.av||'🙂'}</i>${esc(me.name)}</span><span class="sc2"><span class="m">💙 ${fmt(sc.M)}</span><span class="f">💖 ${fmt(sc.F)}</span></span></div><div class="ptug"><i style="width:${tugR()}%"></i></div>`;
@@ -756,7 +791,32 @@ function player(){
   render();
 }
 
-initDB(()=>HOST?host():player());
+/* ---------- Cổng PIN cho màn MC: chưa nhập đúng thì host() chưa chạy (chưa ghi/đọc gì) ---------- */
+function hostGate(start){
+  const pin=String(HOST_PIN||'').trim(),SK='dy_hostok_'+ROOM,given=P.get('host')||'';
+  let ok=!pin||given===pin;
+  if(!ok){try{ok=sessionStorage.getItem(SK)===pin}catch(e){}}                 /* đã nhập đúng trong tab này -> F5 không hỏi lại */
+  const pass=()=>{
+    if(pin){try{sessionStorage.setItem(SK,pin)}catch(e){}}
+    if(pin&&given===pin){try{const q=new URLSearchParams(location.search);q.set('host','1');history.replaceState(null,'',location.pathname+'?'+q.toString())}catch(e){}}   /* giấu PIN khỏi thanh địa chỉ */
+    start()};
+  if(ok){pass();return}
+  const app=$('#app');
+  app.innerHTML=`<div class="pinw"><div class="pinb glass" id="pinb"><div class="pi">🔐</div><h2>Màn hình MC</h2><small>Nhập mã PIN để mở · MC用の暗証番号</small><input id="pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="16" placeholder="••••"><div id="pinerr"></div><button class="btn go" id="pinok">Mở · 開く</button></div></div>`;
+  const inp=$('#pinin'),err=$('#pinerr'),box=$('#pinb'),btn=$('#pinok');let bad=0,lockT=0,lockI=0;
+  const lock=()=>{inp.disabled=btn.disabled=true;clearInterval(lockI);lockI=setInterval(()=>{const l=Math.ceil((lockT-Date.now())/1000);
+      if(l<=0){clearInterval(lockI);inp.disabled=btn.disabled=false;bad=0;err.textContent='';inp.focus()}else err.textContent='Sai nhiều lần · thử lại sau '+l+' giây'},250)};
+  const submit=()=>{
+    if(Date.now()<lockT)return;
+    const v=inp.value.trim();
+    if(!v){err.textContent='Hãy nhập mã PIN';inp.focus();return}
+    if(v===pin){clearInterval(lockI);pass();return}
+    bad++;inp.value='';box.classList.remove('bad');void box.offsetWidth;box.classList.add('bad');
+    if(bad>=5){lockT=Date.now()+30000;lock()}else{err.textContent='Sai mã PIN ('+bad+'/5)';inp.focus()}};
+  btn.onclick=submit;inp.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();submit()}};
+  setTimeout(()=>inp.focus(),50);
+}
+initDB(()=>HOST?hostGate(host):player());
 </script>
 </body>
 </html>
