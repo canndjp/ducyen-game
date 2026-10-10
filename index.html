@@ -180,19 +180,19 @@ body.hb #bgl{filter:brightness(1.7) saturate(1.5)}#bgl{transition:filter .2s}
 
 .rulesov{position:fixed;inset:0;z-index:60;background:rgba(6,2,12,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:2vh 2vw;animation:fadeIn .3s}
 .rbox{max-width:1700px;width:100%;max-height:96vh;overflow:auto}
-.rbox h2{font-family:var(--se);font-size:clamp(26px,3.6vw,56px);text-align:center;color:var(--gold);margin-bottom:2vh}.rbox h2 small{font-family:var(--sa);font-size:.4em;color:var(--mu);margin-left:12px}
-.rcols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw}
-.rs{background:var(--gl);border:1px solid var(--ln);border-radius:18px;padding:1.6vw}
-.rs h3{font-family:var(--se);font-size:clamp(18px,2vw,32px);color:var(--gold);margin-bottom:1vh;display:flex;gap:10px;align-items:center}.rs h3 i{font-style:normal;font-size:1.3em}
-.rs ul{list-style:none;padding:0}.rs li{font-size:clamp(14px,1.45vw,24px);line-height:1.45;margin:.9vh 0;padding-left:1.1em;position:relative}.rs li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
-.rhint{text-align:center;color:var(--mu);margin-top:2vh;font-size:clamp(12px,1vw,16px)}
+.rbox h2{font-family:var(--se);font-size:max(18px,calc(clamp(26px,3.6vw,56px)*var(--rz,1)));text-align:center;color:var(--gold);margin-bottom:calc(2vh*var(--rz,1))}.rbox h2 small{font-family:var(--sa);font-size:.4em;color:var(--mu);margin-left:12px}
+.rcols{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.6vw*var(--rz,1))}
+.rs{background:var(--gl);border:1px solid var(--ln);border-radius:18px;padding:calc(1.6vw*var(--rz,1))}
+.rs h3{font-family:var(--se);font-size:max(12px,calc(clamp(18px,2vw,32px)*var(--rz,1)));color:var(--gold);margin-bottom:calc(1vh*var(--rz,1));display:flex;gap:10px;align-items:center}.rs h3 i{font-style:normal;font-size:1.3em}
+.rs ul{list-style:none;padding:0}.rs li{font-size:max(11.5px,calc(clamp(14px,1.45vw,24px)*var(--rz,1)));line-height:1.45;margin:calc(.9vh*var(--rz,1)) 0;padding-left:1.1em;position:relative}.rs li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
+.rhint{text-align:center;color:var(--mu);margin-top:1.2vh;font-size:clamp(12px,1vw,16px)}
 .prules{margin-top:14px;text-align:left;width:100%}.prules summary{cursor:pointer;text-align:center;font-weight:700;color:var(--gold);padding:10px;border:1px solid var(--ln);border-radius:12px;background:var(--gl)}
 .rp{margin-top:12px;background:var(--gl);border:1px solid var(--ln);border-radius:14px;padding:12px 14px}.rp h3{font-size:15px;color:var(--gold);margin-bottom:6px}.rp h3 i{font-style:normal;margin-right:6px}.rp ul{list-style:none;padding:0}.rp li{font-size:13px;line-height:1.45;margin:5px 0;padding-left:1em;position:relative}.rp li:before{content:'♥';position:absolute;left:0;color:var(--red);font-size:.8em}
 .lgb{display:flex;justify-content:center;gap:10px;margin-bottom:1.4vh}.lgbtn{padding:.55em 1.3em;border-radius:99px;border:2px solid var(--ln);background:var(--gl);font-weight:800;font-size:clamp(13px,1.25vw,20px)}.lgbtn.on{border-color:var(--gold);background:rgba(255,215,106,.25);color:var(--gold)}
 @keyframes fadeIn{from{opacity:0}}
 .mvp .lst{display:grid;grid-template-columns:minmax(0,1fr);column-gap:2vw}.mvp .lst:not(.two){width:min(100%,760px);margin:0 auto}.mvp .lst.two{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--rows,5),auto);grid-auto-flow:column}.mvp .lst>div{min-width:0;gap:.8vw;align-items:center}.mvp .lst>div>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mvp .lst>div>.hint{flex:none;white-space:nowrap}
 .mvp{font-size:clamp(11px,min(1.45vw,2.2vh),22px)}
-@media (max-height:780px){.fin{gap:.6vh}.fin h1{font-size:clamp(24px,min(5.8vw,7vh),98px)}.big{font-size:clamp(16px,min(3.4vw,4vh),56px)}.fin .row{gap:3vw}.aw{gap:.5vh .8vw}.awc{padding:.5vh .8vw}.awc i{font-size:3.2vh}.mvp{padding:.6vh 1vw}.mvp h3{margin-bottom:.2vh}.mvp .lst>div{padding:.15vh 0}}
+@media (max-height:920px){.fin{gap:.6vh}.fin h1{font-size:clamp(24px,min(5.8vw,7vh),98px)}.big{font-size:clamp(16px,min(3.4vw,4vh),56px)}.fin .row{gap:3vw}.aw{gap:.5vh .8vw}.awc{padding:.5vh .8vw}.awc i{font-size:3.2vh}.mvp{padding:.6vh 1vw}.mvp h3{margin-bottom:.2vh}.mvp .lst>div{padding:.15vh 0}}
 
 .qa.tight .lanes,.qa.tight .hint{display:none}
 @media (max-height:780px){.h{gap:.8vh}.qc{padding:1vh 2vw}.lane{min-height:3.4vh}.lane>div i{font-size:2.2vh}.ctl .btn{padding:.6vh 1vw}.meta{gap:1vw}}
@@ -299,10 +299,10 @@ const QUESTIONS=[
  quiz('Màu outfit đi làm quen thuộc nhất của Đức?','ドゥックの仕事着で一番見慣れた色は？',['Áo đen quần trắng|黒シャツ×白パンツ','Vest xám|グレーのスーツ','Áo thun quần jeans|Tシャツ×ジーンズ','Áo trắng quần đen|白シャツ×黒パンツ'],3,'Áo trắng quần đen — gọn gàng, lịch sự! 👔'),
  vote('Ai nấu ăn ngon hơn?','料理が上手なのはどっち？',1),
  quiz('Yến sang Nhật vào thời gian nào?','イェンが来日したのはいつ？',['Tháng 4/2024|2024年4月','Tháng 1/2025|2025年1月','Tháng 7/2025|2025年7月','Tháng 10/2025|2025年10月'],3,'Tháng 10/2025 — và thế là hết yêu xa! ✈️'),
- quiz('Lễ báo hỷ hôm nay diễn ra ngày nào?','今日の披露宴は何日？',['1.1.2026|2026年1月1日','14.2.2026|2026年2月14日','11.10.2026|2026年10月11日','25.12.2026|2026年12月25日'],2,'Chính là hôm nay, 11.10.2026! 🎉'),
+ quiz('Lễ báo hỉ hôm nay diễn ra ngày nào?','今日の結婚報告パーティーは何日？',['1/1/2026|2026年1月1日','14/2/2026|2026年2月14日','11/10/2026|2026年10月11日','25/12/2026|2026年12月25日'],2,'Chính là hôm nay, 11/10/2026! 🎉'),
  quiz('“Arsenal vô địch thì…” là lời hẹn gì?','「アーセナルが優勝したら…」何の約束？',['Đi du lịch|旅行','Mua nhà|家を買う','Tổ chức đám cưới|結婚式を挙げる','Nuôi mèo|猫を飼う'],2,'Arsenal vô địch → lời hẹn thành sự thật! 💍'),
  lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức cầu hôn Yến ngay tại sân Emirates|ドゥックはエミレーツ・スタジアムでプロポーズした','Đức đã sống và học tập ở Nhật 10 năm|ドゥックは日本で10年暮らし、学んできた','Hai bạn đều là người Hải Phòng|二人ともハイフォン出身'],0,'Màn cầu hôn diễn ra ở Hải Phòng ✈️❤️'),
- who(['“Mạng lag chứ tim anh không lag!”','「回線は重くても、僕の心は重くないよ！」'],0),
+ who(['“Mạng lag chứ tim anh không lag!”','「回線はラグっても、僕の心はラグらないよ！」'],0),
  quiz('Đức làm việc tại nghiệp đoàn được bao lâu rồi?','ドゥックが監理団体で働いて、どのくらい？',['1 năm|1年','3 năm rưỡi|3年半','5 năm|5年','8 năm|8年'],1,'3 năm rưỡi gắn bó với nghiệp đoàn! 💼'),
  vote('Ai hay “dỗi” hơn?','よく拗ねるのはどっち？',1),
  quiz('Đức thường hạn chế đồ ăn chứa thành phần gì?','ドゥックが控えている食べ物の成分は？',['Muối|塩','Đường|砂糖','Đồ cay|辛いもの','Dầu mỡ|油'],1,'Đường! Cà phê nhớ order ít ngọt nha 😄',''),
@@ -312,14 +312,14 @@ const QUESTIONS=[
  quiz('Hai bạn đi tuần trăng mật ở đâu?','ハネムーンの行き先は？',['Đà Lạt|ダラット','Phú Quốc|フーコック','Sapa|サパ','Hokkaido|北海道'],2,'Sapa — săn mây, ôm nhau cho đỡ lạnh 🌫️❄️'),
  vote('Ai nói nhiều hơn?','おしゃべりなのはどっち？',1),
  lie('Câu nào là LỜI NÓI DỐI?','嘘はどれ？',['Đức làm việc tại nghiệp đoàn được 3 năm rưỡi|ドゥックは監理団体で3年半働いている','Yến sang Nhật từ tháng 4/2024|イェンは2024年4月に来日した','Đức thường hạn chế ăn đường|ドゥックは砂糖を控えている'],1,'Yến sang Nhật từ tháng 10/2025 nhé! ✈️'),
- quiz('Tết Việt Nam, người lớn thường lì xì trong bao màu gì?','ベトナムのお正月、お年玉の袋は何色？',['Trắng|白','Đen|黒','Xanh dương|青','Đỏ|赤'],3,'Bao đỏ lì xì mang may mắn! Nhật có “otoshidama” (お年玉) giống hệt vậy 🧧'),
+ quiz('Tết Việt Nam, người lớn thường lì xì trong bao màu gì?','ベトナムの旧正月（テト）、お年玉の袋は何色？',['Trắng|白','Đen|黒','Xanh dương|青','Đỏ|赤'],3,'Bao đỏ lì xì mang may mắn! Nhật có “otoshidama” (お年玉) gần giống vậy 🧧'),
  quiz('Đêm giao thừa ở Nhật, người ta thường ăn món gì?','日本の大晦日に食べるものは？',['Mì soba|年越しそば','Sushi|寿司','Lẩu|鍋','Bánh bao|肉まん'],0,'Toshikoshi soba 🍜 — ăn mì dài để sống lâu, cắt đứt vận xui năm cũ!'),
  quiz('“Cạn ly!” trong tiếng Nhật nói thế nào?','「乾杯」は何と言う？',['Itadakimasu|いただきます','Arigatou|ありがとう','Kanpai|乾杯','Sumimasen|すみません'],2,'Kanpai! 🍻 Còn Việt Nam hô: “Một, hai, ba, dô!”'),
  quiz('Người Nhật nói “Itadakimasu” vào lúc nào?','「いただきます」はいつ言う？',['Sau khi ăn|食べた後','Trước khi ngủ|寝る前','Khi chào tạm biệt|別れるとき','Trước khi ăn|食べる前'],3,'Trước bữa ăn, để cảm ơn món ăn và người nấu 🙏 Sau bữa ăn sẽ nói “Gochisousama”.'),
  quiz('Mừng cưới ở Nhật, người ta bỏ tiền vào phong bì gọi là gì?','日本で結婚式のお祝い金を何と言う？',['Otoshidama|お年玉','Goshugi|ご祝儀','Omiyage|お土産','Okaeshi|お返し'],1,'Goshugi (ご祝儀)! Việt Nam cũng mừng cưới bằng phong bì — hai nước giống nhau ghê 💌'),
  quiz('Cắm đũa thẳng đứng vào bát cơm bị kiêng ở cả hai nước vì giống gì?','お箸をご飯に立てるのがタブーなのはなぜ？',['Nén hương cúng người mất|仏前のお線香','Cây tre|竹','Báo hiệu ăn xong|食べ終わりの合図','Lời chúc may mắn|縁起がいい'],0,'Giống nén hương trên bàn thờ nên là điều đại kỵ ở cả Việt Nam lẫn Nhật Bản 🥢'),
  quiz('Ô tô ở Nhật chạy bên nào của đường?','日本の車はどちら側を走る？',['Bên trái|左側','Bên phải|右側','Ở giữa|真ん中','Tùy nơi|場所による'],0,'Nhật đi bên trái, Việt Nam đi bên phải. Sang đường nhớ nhìn kỹ nhé! 🚗'),
- quiz('Loài hoa nào thường được xem là biểu tượng của Việt Nam?','ベトナムの象徴とされる花は？',['Hoa anh đào|桜','Hoa cúc|菊','Hoa mai|梅','Hoa sen|ハス（蓮）'],3,'Hoa sen 🪷 — thanh cao, giản dị. Còn Nhật Bản gắn với hoa anh đào 🌸'),
+ quiz('Loài hoa nào thường được xem là biểu tượng của Việt Nam?','ベトナムの象徴とされる花は？',['Hoa anh đào|桜','Hoa cúc|菊','Hoa hồng|バラ','Hoa sen|ハス（蓮）'],3,'Hoa sen 🪷 — thanh cao, giản dị. Còn Nhật Bản gắn với hoa anh đào 🌸'),
  quiz('Theo Điều 1 của hợp đồng, ai luôn đúng?','契約第1条によると、いつも正しいのは誰？',['Chú rể|新郎','Cô dâu (Vợ)|新婦（妻）','Trọng tài VAR|VAR審判','Love Bot|ラブボット'],1,'Điều 1: Vợ luôn đúng! 👰✅'),
 ];
 
@@ -347,7 +347,7 @@ const seenAdd=i=>{try{const s=seenGet();if(!s.includes(i)){s.push(i);localStorag
      ['Yến sang Nhật từ tháng 4/2024',['Đức làm việc tại nghiệp đoàn được bao lâu','Đức thường hạn chế đồ ăn chứa thành phần gì','Yến sang Nhật vào thời gian nào']],
      ['Đức cổ vũ cho CLB nào',['Arsenal vô địch thì']],
      ['Đức thuộc cung hoàng đạo nào',['Yến thuộc cung hoàng đạo nào']],
-     ['Lễ báo hỷ hôm nay diễn ra ngày nào',['Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào']]
+     ['Lễ báo hỉ hôm nay diễn ra ngày nào',['Đức và Yến tổ chức đám cưới tại Việt Nam vào ngày nào']]
    ];
    const QTXT=POOL.map(q=>(q.q[0]+' '+q.o.map(o=>o[0]).join(' ')).toLowerCase());
    const findQ=t=>QTXT.map((x,i)=>x.includes(t.toLowerCase())?i:-1).filter(i=>i>=0);
@@ -451,12 +451,12 @@ function botComment(c){
 /* ---------- Luật chơi ---------- */
 const RULES=[
  ['🎮','Cách chơi · 遊び方',['Có <b>2 đội: Nam 💙 và Nữ 💖</b>. Quét QR, chọn avatar và đội của mình.','Mỗi câu hỏi có <b>10 giây</b> (câu "2 sự thật 1 lời nói dối" có 12 giây). Cả phòng trả lời cùng lúc trên điện thoại.','Chỉ được chọn <b>1 lần</b>, bấm rồi không đổi được. Trả lời sai <b>không bị trừ điểm</b>.','<b>Người đúng VÀ nhanh nhất</b> (tính cả hai đội) ăn điểm cho đội của mình. Các bạn đúng còn lại giúp đội qua thống kê, nhưng không có điểm.','Câu càng về sau điểm càng lớn: từ <b>100</b> lên tới <b>1.000.000 xu tình yêu</b>. Hết '+ROUND_N+' câu, đội nhiều xu hơn là <b>Triệu phú</b>!']],
- ['🔥','Điểm thưởng · ボーナス',['<b>Combo:</b> người nhanh nhất đã đúng liên tiếp <b>3–4 câu → ×1.5</b>, từ <b>5 câu → ×2</b>.','<b>🆘 Cứu trợ:</b> đội đang bị bỏ xa từ 3 câu trở lên mà thắng câu này được cộng thêm <b>+0.5</b> vào hệ số.','<b>🎲 Đặt cược:</b> mỗi đội có <b>1 lần</b>. Đội hô to "CƯỢC!" khi câu hỏi đang chạy, MC bấm xác nhận. Đội thắng câu đó được <b>×2</b>; nếu đội kia thắng hoặc không ai đúng thì <b>mất 50%</b> điểm câu đó (không bị âm).','Các hệ số cộng/nhân với nhau, nên một câu có thể ra điểm rất lớn!']],
+ ['🔥','Điểm thưởng · ボーナス',['<b>Combo:</b> người nhanh nhất đã đúng liên tiếp <b>3–4 câu → ×1.5</b>, từ <b>5 câu → ×2</b>.','<b>🆘 Cứu trợ:</b> đội đang bị bỏ xa (chênh từ <b>3 lần</b> điểm của câu này) mà thắng câu này được cộng thêm <b>+0.5</b> vào hệ số.','<b>🎲 Đặt cược:</b> mỗi đội có <b>1 lần</b>. Đội hô to "CƯỢC!" khi câu hỏi đang chạy, MC bấm xác nhận. Đội thắng câu đó được <b>×2</b>; nếu đội kia thắng hoặc không ai đúng thì <b>mất 50%</b> điểm câu đó (không bị âm).','Các hệ số cộng/nhân với nhau, nên một câu có thể ra điểm rất lớn!']],
  ['🛟','Quyền trợ giúp · ヘルプ',['Cả phòng có <b>3 quyền, mỗi quyền dùng 1 lần</b>. Đội nào cần thì hô, MC bấm.','<b>50:50:</b> bỏ đi 2 đáp án sai, còn lại 2 lựa chọn.','<b>👥 Hỏi khán giả:</b> hiện % người chơi đang chọn từng đáp án. Tham khảo thôi, đám đông cũng có lúc sai!','<b>📞 Gọi người thân:</b> 30 giây mời <b>Đức, Yến hoặc một vị khách</b> lên tư vấn.','Mẹo: đừng bấm vội, nhưng cũng đừng chậm, vì người nhanh nhất mới có điểm.']]
 ];
 const RULES_JP=[
 ['🎮','あそび方',['チームは<b>男性チーム 💙 と女性チーム 💖 の2つ</b>。QRコードを読み取り、アバターとチームを選んで参加します。','1問の制限時間は<b>10秒</b>（「2つの真実と1つの嘘」だけ12秒）。会場の全員が同時にスマホで回答します。','回答は<b>1回だけ</b>。押したら変更できません。間違えても<b>減点はありません</b>。','<b>正解かつ一番早く答えた人</b>（両チーム通して）が、自分のチームの得点を獲得！ほかの正解者はチームの統計に貢献しますが、得点はありません。','後半の問題ほど高得点：<b>100</b>から最大<b>1,000,000ラブコイン</b>まで。全'+ROUND_N+'問を終えて、コインが多いチームが<b>大富豪</b>に！']],
-['🔥','ボーナスポイント',['<b>コンボ：</b>最速回答者が<b>3〜4問連続</b>で正解すると<b>×1.5</b>、<b>5問連続</b>以上で<b>×2</b>。','<b>🆘 救済：</b>3問分以上の差をつけられているチームがその問題で勝つと、倍率に<b>+0.5</b>が加算されます。','<b>🎲 ベット：</b>各チーム<b>1回</b>だけ。問題中に「ベット！」と宣言し、MCが確定します。そのチームが勝てば<b>×2</b>、相手チームが勝つか全員不正解なら、その問題の得点の<b>50%を失います</b>（マイナスにはなりません）。','倍率は足し算・掛け算で重なるので、1問で大量得点も狙えます！']],
+['🔥','ボーナスポイント',['<b>コンボ：</b>最速回答者が<b>3〜4問連続</b>で正解すると<b>×1.5</b>、<b>5問連続</b>以上で<b>×2</b>。','<b>🆘 救済：</b>その問題の得点の<b>3倍以上</b>の差をつけられているチームがその問題で勝つと、倍率に<b>+0.5</b>が加算されます。','<b>🎲 ベット：</b>各チーム<b>1回</b>だけ。問題中に「ベット！」と宣言し、MCが確定します。そのチームが勝てば<b>×2</b>、相手チームが勝つか全員不正解なら、その問題の得点の<b>50%を失います</b>（マイナスにはなりません）。','倍率は足し算・掛け算で重なるので、1問で大量得点も狙えます！']],
 ['🛟','ライフライン',['会場全体で<b>3つのライフライン</b>があり、それぞれ<b>1回</b>ずつ使えます。使いたいチームが声を上げ、MCが押します。','<b>50:50：</b>不正解の選択肢を2つ消して、残り2択にします。','<b>👥 オーディエンス：</b>各選択肢を選んでいる参加者の割合を表示。あくまで参考です、みんなが間違えることもあります！','<b>📞 テレフォン：</b>30秒間、<b>ドゥック、イェン、またはゲスト</b>をステージに呼んでアドバイスをもらいます。','コツ：焦りすぎず、でも遅すぎず。一番早い正解者だけが得点できます！']]
 ];
 const LANG_KEY='dy_lang';
@@ -465,7 +465,12 @@ const langBar=()=>`<div class="lgb"><button class="lgbtn ${LANG=='vi'?'on':''}" 
 const rulesPanel=c=>c=='rs'
   ?`${langBar()}<h2>${LANG=='jp'?'📖 ルール説明':'📖 LUẬT CHƠI <small>ルール説明</small>'}</h2><div class="rcols">${rulesHTML('rs')}</div><p class="rhint">${LANG=='jp'?'L / Esc キー、または画面クリックで閉じる ・ V: Tiếng Việt':'Nhấn L / Esc / bấm vào đây để đóng · J: 日本語'}</p>`
   :`${langBar()}${rulesHTML('rp')}`;
-function setLang(l){LANG=l=='jp'?'jp':'vi';try{localStorage[LANG_KEY]=LANG}catch(e){}document.querySelectorAll('.rwrap').forEach(w=>{w.innerHTML=rulesPanel(w.dataset.c)})}
+/* Bảng luật của MC: co chữ dần cho vừa khung màn hình (không phải cuộn) */
+function fitRules(){const o=document.getElementById('rulesov'),b=o&&o.querySelector('.rbox');if(!b)return;
+  let z=1;const ap=()=>b.style.setProperty('--rz',z);ap();
+  while(b.scrollHeight>b.clientHeight+1&&z>.5){z=Math.round((z-.03)*100)/100;ap()}}
+addEventListener('resize',()=>fitRules());
+function setLang(l){LANG=l=='jp'?'jp':'vi';try{localStorage[LANG_KEY]=LANG}catch(e){}document.querySelectorAll('.rwrap').forEach(w=>{w.innerHTML=rulesPanel(w.dataset.c)});fitRules()}
 const rulesHTML=(c)=>(LANG=='jp'?RULES_JP:RULES).map(r=>`<section class="${c}"><h3><i>${r[0]}</i>${r[1]}</h3><ul>${r[2].map(t=>`<li>${t}</li>`).join('')}</ul></section>`).join('');
 function host(){
   let players={},answers={},results={},S={phase:'lobby',qi:-1},used={f:0,a:0,c:0},audOn=0,timer=0,botsOn=0,bots=[],lastKey='',auto=0,tipI=0,tipT=0;
@@ -678,7 +683,7 @@ function host(){
 
   /* --- quyền trợ giúp --- */
   function rulesToggle(){const o=document.getElementById('rulesov');if(o){o.remove();return}
-    const d=document.createElement('div');d.id='rulesov';d.className='rulesov';d.innerHTML=`<div class="rbox"><div class="rwrap" data-c="rs">${rulesPanel('rs')}</div></div>`;d.onclick=()=>d.remove();document.body.append(d)}
+    const d=document.createElement('div');d.id='rulesov';d.className='rulesov';d.innerHTML=`<div class="rbox"><div class="rwrap" data-c="rs">${rulesPanel('rs')}</div></div>`;d.onclick=()=>d.remove();document.body.append(d);fitRules();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitRules)}
   function bet(t){if(S.phase!='q'||betUsed[t])return;DB.update('state',{bet:S.bet===t?null:t});tone(300,.15,0,.08);tone(450,.15,.12,.08)}
   function l50(){const q=Q[S.qi];if(S.phase!='q'||used.f||q.o.length<3)return;used.f=1;const wr=q.o.map((_,i)=>i).filter(i=>i!==q.a).sort(()=>Math.random()-.5).slice(0,2);DB.update('state',{hide:wr});tone(700,.2)}
   function lau(){if(S.phase!='q'||used.a)return;used.a=1;audOn=1;render()}
